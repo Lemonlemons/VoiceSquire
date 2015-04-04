@@ -1,0 +1,52 @@
+<h1>Squire</h1>
+<% if user_signed_in? %>
+  Logged in as <strong><%= current_user.email %></strong>
+  <%= link_to 'Edit Profile',edit_user_registration_path %>
+  <%= link_to "Sign out", destroy_user_session_path, method: :delete %>
+
+  <h1>Welcome Back Squire</h1>
+
+  <% if current_user.registrationcomplete == false %>
+    <% if current_user.stripecomplete == false %>
+      <p>Please complete stripe sign-up</p>
+      <%= link_to image_tag('blue-on-light.png'), user_omniauth_authorize_path(:stripe_connect,
+        "stripe_user[email]" => current_user.email,
+        "stripe_user[country]" => current_user.country,
+        "stripe_user[phone_number]" => current_user.phonenumber,
+        "stripe_user[business_name]" => "Squire" + current_user.id,
+        "stripe_user[business_type]" => "sole_prop",
+        "stripe_user[first_name]" => current_user.firstname,
+        "stripe_user[last_name]" => current_user.lastname,
+        "stripe_user[dob_day]" => current_user.birthday.day,
+        "stripe_user[dob_month]" => current_user.birthday.month,
+        "stripe_user[dob_year]" => current_user.birthday.year,
+        "stripe_user[street_address]" => current_user.address,
+        "stripe_user[city]" => current_user.city,
+        "stripe_user[state]" => current_user.state,
+        "stripe_user[zip]" => current_user.zipcode,
+        "stripe_user[physical_product]" => "false",
+        "stripe_user[product_category]" => "consulting",
+        "stripe_user[product_description]" => "Completion of a service or assignment on behalf of a customer",
+        #"stripe_user[average_payment]" => 1000,
+        #"stripe_user[past_year_volume]" => 0,
+        "stripe_user[currency]" => "usd") %>
+    <% elsif current_user.trainingcomplete == false %>
+      <img src="smiley.jpg" />
+      <p>now please watch these training videos</p>
+    <% end %>
+  <% else %>
+    <img src="smiley.jpg" />
+    <img src="smiley.jpg" />
+    <img src="smiley.jpg" />
+  <% end %>
+
+  <button onClick="getmeaquest_quest_path(current_user)">Get A Quest</button>
+
+<% else %>
+  <%= link_to "Sign up", new_user_registration_path %>
+  <%= link_to "Sign in", new_user_session_path %>
+  <hr />
+  <h1>Welcome to Squire</h1>
+  <p>Please Sign Up!</p>
+
+<% end %>

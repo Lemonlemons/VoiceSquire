@@ -1,0 +1,2 @@
+class DukesController < ApplicationController
+end
