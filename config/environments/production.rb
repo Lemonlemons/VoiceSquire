@@ -6,12 +6,12 @@ Rails.application.configure do
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-  :address              => "smtp.gmail.com",
-  :port                 => 587,
+  :address              => "smtp.office365.com",
+  :port                 => '587',
   :domain               => 'usesquire.com',
-  :user_name            => 'moeandrew777@gmail.com',
-  :password             => 'Megamoe7',
-  :authentication       => 'plain',
+  :user_name            => Rails.application.secrets.smtp_username,
+  :password             => Rails.application.secrets.smtp_password,
+  :authentication       => :login,
   :enable_starttls_auto => true  }
 
   # Eager load code on boot. This eager loads most of Rails and
