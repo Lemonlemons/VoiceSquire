@@ -6,69 +6,67 @@
 
   <h1>Welcome Back Squire</h1>
 
-  <% if current_user.registrationcomplete == false %>
-    <% if current_user.stripecomplete == false %>
-      <img src="assets/smiley.jpg" />
-      <p>Please complete stripe sign-up</p>
-      <%= link_to image_tag('blue-on-light.png'), user_omniauth_authorize_path(:stripe_connect,
-        "stripe_user[email]" => current_user.email,
-        "stripe_user[url]" => "http://www.usesquire.com",
-        "stripe_user[country]" => "US",
-        "stripe_user[phone_number]" => current_user.phonenumber,
-        "stripe_user[business_name]" => "Squire" + current_user.id.to_s,
-        "stripe_user[business_type]" => "sole_prop",
-        "stripe_user[first_name]" => current_user.firstname,
-        "stripe_user[last_name]" => current_user.lastname,
-        "stripe_user[dob_day]" => current_user.birthday.day,
-        "stripe_user[dob_month]" => current_user.birthday.month,
-        "stripe_user[dob_year]" => current_user.birthday.year,
-        "stripe_user[street_address]" => current_user.address,
-        "stripe_user[city]" => current_user.city,
-        "stripe_user[state]" => current_user.state,
-        "stripe_user[zip]" => current_user.zipcode,
-        "stripe_user[physical_product]" => "false",
-        "stripe_user[product_category]" => "consulting",
-        "stripe_user[product_description]" => "Completion of a service or assignment on behalf of a customer",
-        #"stripe_user[average_payment]" => 1000,
-        #"stripe_user[past_year_volume]" => 0,
-        "stripe_user[currency]" => "usd") %>
-    <% elsif current_user.trainingcomplete == false %>
-      <img src="assets/smiley.jpg" />
-      <img src="assets/smiley.jpg" />
-      <p>now please watch these training videos</p>
-      <a href='<%= dotraining_quest_path(current_user) %>'>Complete Training Here</a>
-    <% end %>
+  <% if current_user.stripecomplete == false %>
+    <img src="assets/smiley.jpg" />
+    <p>Please complete stripe sign-up</p>
+    <%= link_to image_tag('blue-on-light.png'), user_omniauth_authorize_path(:stripe_connect,
+      "stripe_user[email]" => current_user.email,
+      "stripe_user[url]" => "http://www.usesquire.com",
+      "stripe_user[country]" => "US",
+      "stripe_user[phone_number]" => current_user.phonenumber,
+      "stripe_user[business_name]" => "Squire" + current_user.id.to_s,
+      "stripe_user[business_type]" => "sole_prop",
+      "stripe_user[first_name]" => current_user.firstname,
+      "stripe_user[last_name]" => current_user.lastname,
+      "stripe_user[dob_day]" => current_user.birthday.day,
+      "stripe_user[dob_month]" => current_user.birthday.month,
+      "stripe_user[dob_year]" => current_user.birthday.year,
+      "stripe_user[street_address]" => current_user.address,
+      "stripe_user[city]" => current_user.city,
+      "stripe_user[state]" => current_user.state,
+      "stripe_user[zip]" => current_user.zipcode,
+      "stripe_user[physical_product]" => "false",
+      "stripe_user[product_category]" => "consulting",
+      "stripe_user[product_description]" => "Completion of a service or assignment on behalf of a customer",
+      #"stripe_user[average_payment]" => 1000,
+      #"stripe_user[past_year_volume]" => 0,
+      "stripe_user[currency]" => "usd") %>
+  <% elsif current_user.trainingcomplete == false %>
+    <img src="assets/smiley.jpg" />
+    <img src="assets/smiley.jpg" />
+    <p>now please watch these training videos</p>
+    <a href='<%= dotraining_quest_path(current_user) %>'>Complete Training Here</a>
   <% else %>
     <img src="smiley.jpg" />
     <img src="smiley.jpg" />
     <img src="smiley.jpg" />
-  <% end %>
 
-  <%= button_to "Get a Quest", getmeaquest_quest_path(current_user), :method => "get" %>
+    <%= button_to "Get a Quest", getmeaquest_quest_path(current_user), :method => "get" %>
 
-  <h2>Ongoing Quests</h2>
-  <% @quests.each do |quest| %>
-    <% if quest.squire_id == current_user.id %>
-      <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
-      <p><%= quest.description %></p>
-      <p><%= quest.textlink %></p>
-      <% if quest.audiolink.nil? %>
+    <h2>Ongoing Quests</h2>
+    <% @quests.each do |quest| %>
+      <% if quest.squire_id == current_user.id %>
+        <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
+        <p><%= quest.description %></p>
+        <p><%= quest.textlink %></p>
+        <% if quest.audiolink.nil? %>
+        <% else %>
+          <audio controls>
+            <source src="<%= quest.audiolink %>" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        <% end %>
+        <hr />
       <% else %>
-        <audio controls>
-          <source src="<%= quest.audiolink %>" type="audio/wav">
-          Your browser does not support the audio element.
-        </audio>
       <% end %>
-      <hr />
-    <% else %>
     <% end %>
-  <% end %>
 
-  <h2>Stats</h2>
-  <p>Number of Quests Completed: <%= current_user.completedquests %></p>
-  <p>Number of Notes Completed: <%= current_user.numberofnotes %></p>
-  <p>Number of Reviews Received: <%= current_user.numberofreviews %></p>
-  <p>Review Rating: %<%= current_user.reviewpercentage %></p>
+    <h2>Stats</h2>
+    <p>Number of Quests Completed: <%= current_user.completedquests %></p>
+    <p>Number of Notes Completed: <%= current_user.numberofnotes %></p>
+    <p>Number of Reviews Received: <%= current_user.numberofreviews %></p>
+    <p>Review Rating: %<%= current_user.reviewpercentage %></p>
+  <% end %>
 
 <% else %>
   <%= link_to "Sign up", new_user_registration_path %>

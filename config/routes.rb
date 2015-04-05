@@ -10,6 +10,11 @@ Rails.application.routes.draw do
 
   resources :dukes
 
+  post 'twilio/voice' => 'twilio#voice'
+  post 'twilio/record' => "twilio#record"
+  post 'twilio/message' => "twilio#message"
+  post 'twilio/connect_customer' => 'twilio#connect_customer'
+
   root 'quests#index'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
