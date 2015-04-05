@@ -1,6 +1,6 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-  config.action_mailer.default_url_options = { :host => "young-citadel-2795.herokuapp.com" }
+  config.action_mailer.default_url_options = { :host => "https://young-citadel-2795.herokuapp.com" }
   # Code is not reloaded between requests.
   config.cache_classes = true
 
@@ -8,7 +8,7 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
   :address              => "smtp.gmail.com",
   :port                 => 587,
-  :domain               => 'gmail.com',
+  :domain               => 'usesquire.com',
   :user_name            => 'moeandrew777@gmail.com',
   :password             => 'Megamoe7',
   :authentication       => 'plain',
