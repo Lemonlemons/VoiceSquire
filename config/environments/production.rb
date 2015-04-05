@@ -1,16 +1,19 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-  config.action_mailer.default_url_options = { :host => "young-citadel-2795.herokuapp.com/" }
+  config.action_mailer.default_url_options = { :host => "young-citadel-2795.herokuapp.com" }
   # Code is not reloaded between requests.
   config.cache_classes = true
 
   config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.default :charset => "utf-8"
   config.action_mailer.smtp_settings = {
   :address              => "smtp.office365.com",
   :port                 => '587',
   :domain               => 'usesquire.com',
-  :user_name            => Rails.application.secrets.smtp_username,
-  :password             => Rails.application.secrets.smtp_password,
+  :user_name            => 'confirm@usesquire.com',
+  :password             => 'Megamoe7!',
   :authentication       => :login,
   :enable_starttls_auto => true  }
 
