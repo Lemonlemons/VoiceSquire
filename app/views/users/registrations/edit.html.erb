@@ -6,6 +6,37 @@
   <div><%= f.label :email %><br />
   <%= f.email_field :email, autofocus: true %></div>
 
+  <div><%= f.label :birthday, "Your Birthday:" %><br />
+  <%= f.date_select :birthday, options={start_year: 1933} %></div>
+
+  <div><%= f.label :firstname, "Firstname:" %><br />
+  <%= f.text_field :firstname %></div>
+
+  <div><%= f.label :lastname, "Lastname:" %><br />
+  <%= f.text_field :lastname %></div>
+
+  <p>Are you male or female?</p>
+  <div><%= f.radio_button :is_female, false %> <%= f.label :is_female, "Male" %>
+       <%= f.radio_button :is_female, true %> <%= f.label :is_female, "Female" %> </div>
+
+  <div><%= f.label :phonenumber, "Phonenumber:" %><br />
+  <%= f.text_field :phonenumber %></div>
+
+  <div><%= f.label :address, "Address:" %><br />
+  <%= f.text_field :address %></div>
+
+  <div><%= f.label :city, "City:" %><br />
+  <%= f.text_field :city %></div>
+
+  <div><%= f.label :state, "State:" %><br />
+  <%= f.text_field :state %></div>
+
+  <div><%= f.label :country, "Country:" %><br />
+  <%= f.text_field :country %></div>
+
+  <div><%= f.label :zipcode, "Zipcode:" %><br />
+  <%= f.text_field :zipcode %></div>
+
   <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
     <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
   <% end %>

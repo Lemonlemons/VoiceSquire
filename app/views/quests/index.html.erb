@@ -11,9 +11,9 @@
       <p>Please complete stripe sign-up</p>
       <%= link_to image_tag('blue-on-light.png'), user_omniauth_authorize_path(:stripe_connect,
         "stripe_user[email]" => current_user.email,
-        "stripe_user[country]" => current_user.country,
+        "stripe_user[country]" => "US",
         "stripe_user[phone_number]" => current_user.phonenumber,
-        "stripe_user[business_name]" => "Squire" + current_user.id,
+        "stripe_user[business_name]" => "Squire" + current_user.id.to_s,
         "stripe_user[business_type]" => "sole_prop",
         "stripe_user[first_name]" => current_user.firstname,
         "stripe_user[last_name]" => current_user.lastname,
