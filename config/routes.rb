@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :quests do
     member do
       get 'getmeaquest'
+      get 'dotraining'
     end
   end
 

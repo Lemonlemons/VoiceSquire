@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150404231436) do
+ActiveRecord::Schema.define(version: 20150405044228) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,8 +94,8 @@ ActiveRecord::Schema.define(version: 20150404231436) do
     t.string   "access_code"
     t.datetime "birthday"
     t.boolean  "is_female",                   default: false
-    t.integer  "activejobs",                  default: 0
-    t.integer  "completedjobs",               default: 0
+    t.integer  "activequests",                default: 0
+    t.integer  "completedquests",             default: 0
     t.integer  "totalcollected",              default: 0
     t.boolean  "completedbasictraining",      default: false
     t.boolean  "completedamazontraining",     default: false

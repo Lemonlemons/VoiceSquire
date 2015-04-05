@@ -8,9 +8,11 @@
 
   <% if current_user.registrationcomplete == false %>
     <% if current_user.stripecomplete == false %>
+      <img src="assets/smiley.jpg" />
       <p>Please complete stripe sign-up</p>
       <%= link_to image_tag('blue-on-light.png'), user_omniauth_authorize_path(:stripe_connect,
         "stripe_user[email]" => current_user.email,
+        "stripe_user[url]" => "http://www.usesquire.com",
         "stripe_user[country]" => "US",
         "stripe_user[phone_number]" => current_user.phonenumber,
         "stripe_user[business_name]" => "Squire" + current_user.id.to_s,
@@ -31,8 +33,10 @@
         #"stripe_user[past_year_volume]" => 0,
         "stripe_user[currency]" => "usd") %>
     <% elsif current_user.trainingcomplete == false %>
-      <img src="smiley.jpg" />
+      <img src="assets/smiley.jpg" />
+      <img src="assets/smiley.jpg" />
       <p>now please watch these training videos</p>
+      <a href='<%= dotraining_quest_path(current_user) %>'>Complete Training Here</a>
     <% end %>
   <% else %>
     <img src="smiley.jpg" />
@@ -40,7 +44,31 @@
     <img src="smiley.jpg" />
   <% end %>
 
-  <button onClick="getmeaquest_quest_path(current_user)">Get A Quest</button>
+  <%= button_to "Get a Quest", getmeaquest_quest_path(current_user), :method => "get" %>
+
+  <h2>Ongoing Quests</h2>
+  <% @quests.each do |quest| %>
+    <% if quest.squire_id == current_user.id %>
+      <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
+      <p><%= quest.description %></p>
+      <p><%= quest.textlink %></p>
+      <% if quest.audiolink.nil? %>
+      <% else %>
+        <audio controls>
+          <source src="<%= quest.audiolink %>" type="audio/wav">
+          Your browser does not support the audio element.
+        </audio>
+      <% end %>
+      <hr />
+    <% else %>
+    <% end %>
+  <% end %>
+
+  <h2>Stats</h2>
+  <p>Number of Quests Completed: <%= current_user.completedquests %></p>
+  <p>Number of Notes Completed: <%= current_user.numberofnotes %></p>
+  <p>Number of Reviews Received: <%= current_user.numberofreviews %></p>
+  <p>Review Rating: %<%= current_user.reviewpercentage %></p>
 
 <% else %>
   <%= link_to "Sign up", new_user_registration_path %>
