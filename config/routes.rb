@@ -9,6 +9,9 @@ Rails.application.routes.draw do
   end
 
   resources :dukes
+  resources :messages
+  resources :reviews
+  resources :notes
 
   post 'twilio/voice' => 'twilio#voice'
   post 'twilio/record' => "twilio#record"

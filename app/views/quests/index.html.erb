@@ -48,8 +48,8 @@
       <% if quest.squire_id == current_user.id %>
         <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
         <p><%= quest.description %></p>
-        <p><%= quest.textlink %></p>
         <% if quest.audiolink.nil? %>
+          <p><%= quest.textlink %></p>
         <% else %>
           <audio controls>
             <source src="<%= quest.audiolink %>" type="audio/wav">

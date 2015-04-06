@@ -10,9 +10,15 @@ class TwilioController < ApplicationController
   def voice
     fromnumber = params['From']
     if @duke = Duke.where(phonenumber: fromnumber).first
-      response = Twilio::TwiML::Response.new do |r|
-        r.Say 'Welcome master, what can I do for you?', :voice => 'alice'
-        r.Record action:"/twilio/record", method:"post"
+      if @duke.email != nil
+        response = Twilio::TwiML::Response.new do |r|
+          r.Say 'Welcome master, what can I do for you?', :voice => 'alice'
+          r.Record action:"/twilio/record", method:"post"
+        end
+      else
+        response = Twilio::TwiML::Response.new do |r|
+          r.Say 'Thank you for contacting us but we will contact you soon to help set up your account', :voice => 'alice'
+        end
       end
     else
       @duke = Duke.new(phonenumber: fromnumber)
@@ -31,23 +37,28 @@ class TwilioController < ApplicationController
   end
 
   def record
-      dukenumber = params['From']
-      recordingUrl = params['RecordingUrl']
-      recordingDuration = params['RecordingDuration']
-      duke = Duke.where(phonenumber:dukenumber).first
-      quest = Quest.new(duke_id: duke.id, audiolink: recordingUrl)
-      quest.save
+    dukenumber = params['From']
+    recordingUrl = params['RecordingUrl']
+    recordingDuration = params['RecordingDuration']
+    duke = Duke.where(phonenumber:dukenumber).first
+    quest = Quest.new(duke_id: duke.id, audiolink: recordingUrl)
+    if quest.save
       response = Twilio::TwiML::Response.new do |r|
         r.Say "It will be done."
       end
-      render_twiml response
+    else
+      response = Twilio::TwiML::Response.new do |r|
+        r.Say "There was a problem"
+      end
+    end
+    render_twiml response
   end
 
   def message
     messageBody = params['Body']
     messageFrom = params['From']
-    duke = Duke.where(phonenumber: fromnumber).first
-    quest = Quest.new(duke_id:duke.id, textlink:messageBody)
+    @duke = Duke.where(phonenumber: fromnumber).first
+    quest = Quest.new(duke_id:@duke.id, textlink:messageBody)
     quest.save
     render_twiml Twilio::TwiML::Response.new
   end

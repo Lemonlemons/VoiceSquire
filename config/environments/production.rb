@@ -1,4 +1,5 @@
 Rails.application.configure do
+  config.middleware.use Rack::TwilioWebhookAuthentication, Rails.application.secrets.twilio_auth_token, '/voice'
   # Settings specified here will take precedence over those in config/application.rb.
   config.action_mailer.default_url_options = { :host => "young-citadel-2795.herokuapp.com" }
   # Code is not reloaded between requests.

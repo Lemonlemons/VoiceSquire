@@ -1,0 +1,68 @@
+<h1>Squire</h1>
+<% if user_signed_in? %>
+  Logged in as <strong><%= current_user.email %></strong>
+  <%= link_to 'Edit Profile',edit_user_registration_path %>
+  <%= link_to "Sign out", destroy_user_session_path, method: :delete %>
+
+  <%= form_for @duke do |form|%>
+
+    <% if @duke.errors.any? %>
+      <h2>Errors:</h2>
+      <ul>
+        <% @duke.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <h2>Dukes phone number: <%= @duke.phonenumber %></h2>
+
+    <p>
+      <%= form.label "Enter firstname below:" %>
+      <%= form.text_field :firstname, autocomplete: "off" %>
+    </p>
+    <p>
+      <%= form.submit "Submit" %>
+    </p>
+
+  <% end %>
+
+  <%= button_to "Get a Quest", getmeaquest_quest_path(current_user), :method => "get" %>
+
+  <h2>Ongoing Quests</h2>
+  <% @dukes.each do |duke| %>
+    <% if duke.squire_id == current_user.id %>
+      <p><%= duke.phonenumber %></p>
+    <% end %>
+  <% end %>
+  <% @quests.each do |quest| %>
+    <% if quest.squire_id == current_user.id %>
+      <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
+      <p><%= quest.description %></p>
+      <% if quest.audiolink.nil? %>
+        <p><%= quest.textlink %></p>
+      <% else %>
+        <audio controls>
+          <source src="<%= quest.audiolink %>" type="audio/wav">
+          Your browser does not support the audio element.
+        </audio>
+      <% end %>
+      <hr />
+    <% else %>
+    <% end %>
+  <% end %>
+
+  <h2>Stats</h2>
+  <p>Number of Quests Completed: <%= current_user.completedquests %></p>
+  <p>Number of Notes Completed: <%= current_user.numberofnotes %></p>
+  <p>Number of Reviews Received: <%= current_user.numberofreviews %></p>
+  <p>Review Rating: %<%= current_user.reviewpercentage %></p>
+
+<% else %>
+  <%= link_to "Sign up", new_user_registration_path %>
+  <%= link_to "Sign in", new_user_session_path %>
+  <hr />
+  <h1>Welcome to Squire</h1>
+  <p>Please Sign Up!</p>
+
+<% end %>

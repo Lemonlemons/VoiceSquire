@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150405044228) do
+ActiveRecord::Schema.define(version: 20150406035133) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,6 +44,29 @@ ActiveRecord::Schema.define(version: 20150405044228) do
     t.integer  "numberofnotes",                   default: 0
     t.datetime "created_at",                                      null: false
     t.datetime "updated_at",                                      null: false
+    t.integer  "squire_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.string   "title"
+    t.text     "body"
+    t.boolean  "is_email",   default: false
+    t.boolean  "is_text",    default: false
+    t.integer  "squire_id"
+    t.integer  "duke_id"
+    t.integer  "quest_id"
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+  end
+
+  create_table "notes", force: :cascade do |t|
+    t.string   "title"
+    t.text     "explanation"
+    t.integer  "squire_id"
+    t.integer  "duke_id"
+    t.integer  "quest_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
   create_table "quests", force: :cascade do |t|
@@ -69,6 +92,16 @@ ActiveRecord::Schema.define(version: 20150405044228) do
     t.string   "picture3"
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.integer  "rating"
+    t.text     "explanation"
+    t.integer  "squire_id"
+    t.integer  "duke_id"
+    t.integer  "quest_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
   create_table "states", force: :cascade do |t|

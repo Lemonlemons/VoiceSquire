@@ -25,6 +25,7 @@ class QuestsController < ApplicationController
   def edit
     @quest = Quest.find(params[:id])
     @quests = Quest.all
+    @notes = Note.where(duke_id: @quest.duke_id)
     capability = Twilio::Util::Capability.new Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token
     capability.allow_client_outgoing Rails.application.secrets.twilio_twiml_app_sid
     @token = capability.generate()
@@ -56,11 +57,17 @@ class QuestsController < ApplicationController
   def getmeaquest
     @user = User.find(params[:id])
     if (@user.activequests < 4)
-      if @duke = Duke.where(email: nil).first
+      if @duke = Duke.where(squire_id: nil).first
+        @duke.squire_id = @user.id
+        @user.activequests = @user.activequests + 1
         capability = Twilio::Util::Capability.new Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token
         capability.allow_client_outgoing Rails.application.secrets.twilio_twiml_app_sid
         @token = capability.generate()
-        redirect_to edit_duke_path(@duke), notice: "Help this Duke fill out their registration"
+        if (@duke.save && @user.save)
+          redirect_to edit_duke_path(@duke), notice: "Help this Duke fill out their registration"
+        else
+          redirect_to quests_path, notice:"There was a problem"
+        end
       else
         if @quest = Quest.where(squire_id: nil).first
            @quest.squire_id = @user.id
