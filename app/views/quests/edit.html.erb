@@ -1,8 +1,19 @@
 <h1>Squire</h1>
 <% if user_signed_in? %>
+  <p> There are <%= @quests2.count + @dukes.where(email: nil).count %> available quests</p>
   Logged in as <strong><%= current_user.email %></strong>
   <%= link_to 'Edit Profile',edit_user_registration_path %>
   <%= link_to "Sign out", destroy_user_session_path, method: :delete %>
+
+  <button onClick="call()">Make Call</button>
+  <button onClick="disconnect()">End Call</button>
+  <script type="text/javascript" src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+  <script>
+  // works on IE9 and above
+  document.addEventListener("DOMContentLoaded", function(event) { Twilio.Device.setup("<%= @token %>"); });
+  function call() { Twilio.Device.connect({id: <%= @duke.phonenumber %>}); }
+  function disconnect() { Twilio.Device.disconnectAll(); }
+  </script>
 
   <h2>Notes on this Duke</h2>
   <% @notes.each do |note| %>
@@ -22,8 +33,8 @@
       </ul>
     <% end %>
 
-    <% if quest.audiolink.nil? %>
-      <p><%= quest.textlink %></p>
+    <% if @quest.audiolink.nil? %>
+      <p><%= @quest.textlink %></p>
     <% else %>
       <audio controls>
         <source src="<%= quest.audiolink %>" type="audio/wav">
@@ -31,19 +42,27 @@
       </audio>
     <% end %>
 
-    <p>
-      <%= form.label "Enter title below:" %>
-      <%= form.text_field :title, autocomplete: "off" %>
-    </p>
-    <p>
-      <%= form.submit "Submit" %>
-    </p>
+    <p><%= form.label "Enter title below:" %></p>
+    <p><%= form.text_field :title, autocomplete: "off" %></p>
+
+    <p><%= form.label "Enter description below:" %></p>
+    <p><%= form.text_area :description, autocomplete: "off" %></p>
+
+    <p><%= form.label "Enter cost of quest:" %></p>
+    <p><%= form.text_field :pricetosquire, autocomplete: "off" %></p>
+
+    <p><%= form.submit "Submit" %></p>
 
   <% end %>
 
   <%= button_to "Get a Quest", getmeaquest_quest_path(current_user), :method => "get" %>
 
   <h2>Ongoing Quests</h2>
+  <% @dukes.each do |duke| %>
+    <% if (duke.squire_id == current_user.id) && (duke.registered == false) %>
+      <p><%= link_to duke.phonenumber, edit_duke_path(duke) %></p>
+    <% end %>
+  <% end %>
   <% @quests.each do |quest| %>
     <% if quest.squire_id == current_user.id %>
       <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>

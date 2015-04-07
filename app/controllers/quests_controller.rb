@@ -1,6 +1,8 @@
 class QuestsController < ApplicationController
   def index
     @quests = Quest.all
+    @quests2 = Quest.where(squire_id: nil)
+    @dukes = Duke.all
   end
 
   def show
@@ -25,7 +27,10 @@ class QuestsController < ApplicationController
   def edit
     @quest = Quest.find(params[:id])
     @quests = Quest.all
+    @quests2 = Quest.where(squire_id: nil)
     @notes = Note.where(duke_id: @quest.duke_id)
+    @dukes = Duke.all
+    @duke = Duke.where(id: @quest.duke_id).first
     capability = Twilio::Util::Capability.new Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token
     capability.allow_client_outgoing Rails.application.secrets.twilio_twiml_app_sid
     @token = capability.generate()
@@ -35,7 +40,7 @@ class QuestsController < ApplicationController
     @quest = Quest.find(params[:id])
 
     if @quest.update_attributes(quest_params)
-      redirect_to edit_quest_path(@quest), notice: "Your quest has been updated"
+      redirect_to edit_quest_path(@quest), notice: "Your proposal has been sent"
     else
       redirect_to edit_quest_path(@quest), notice: "Something went wrong"
     end
@@ -75,7 +80,7 @@ class QuestsController < ApplicationController
            if (@quest.save && @user.save)
              redirect_to edit_quest_path(@quest), notice: "You hath taken on the Quest"
            else
-             redirect_to quests_path, notice:"There was a problem"
+             redirect_to quests_path, notice:"There was a problem mmmm"
            end
         else
           redirect_to quests_path, notice:"No available quests"

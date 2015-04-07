@@ -29,7 +29,7 @@
   <%= f.text_field :city %></div>
 
   <div><%= f.label :state, "State:" %><br />
-  <%= f.collection_select(:state, State.all, :name) %></div>
+  <%= f.collection_select(:state, State.all, :name, :name) %></div>
 
   <div><%= f.label :zipcode, "Zipcode:" %><br />
   <%= f.text_field :zipcode %></div>

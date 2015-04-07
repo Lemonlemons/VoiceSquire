@@ -26,6 +26,7 @@ class DukesController < ApplicationController
     @duke = Duke.find(params[:id])
     @dukes = Duke.all
     @quests = Quest.all
+    @quests2 = Quest.where(squire_id: nil)
     capability = Twilio::Util::Capability.new Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token
     capability.allow_client_outgoing Rails.application.secrets.twilio_twiml_app_sid
     @token = capability.generate()
@@ -33,9 +34,15 @@ class DukesController < ApplicationController
 
   def update
     @duke = Duke.find(params[:id])
-
+    @user = User.where(id: @duke.squire_id)
     if @duke.update_attributes(duke_params)
-      redirect_to edit_duke_path(@duke), notice: "Your duke has been updated"
+      @duke.registered = true
+      @user.activequests = @user.activequests - 1
+      if @duke.save && @user.save
+        redirect_to quests_path, notice: "Your duke has been updated"
+      else
+        redirect_to edit_duke_path(@duke), notice: "Save went down"
+      end
     else
       redirect_to edit_duke_path(@duke), notice: "Something went wrong"
     end

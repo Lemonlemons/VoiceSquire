@@ -9,6 +9,9 @@ class TwilioController < ApplicationController
 
   def voice
     fromnumber = params['From']
+    fromcity = params['FromCity']
+    fromzip = params['FromZip']
+    fromstate = params['FromState']
     if @duke = Duke.where(phonenumber: fromnumber).first
       if @duke.email != nil
         response = Twilio::TwiML::Response.new do |r|
@@ -21,7 +24,7 @@ class TwilioController < ApplicationController
         end
       end
     else
-      @duke = Duke.new(phonenumber: fromnumber)
+      @duke = Duke.new(phonenumber: fromnumber,  city: fromcity, state: fromstate, zipcode: fromzip)
       if @duke.save
         response = Twilio::TwiML::Response.new do |r|
           r.Say "Hello, and welcome to Squire. A squire will connect with you shortly to help fill out your new user registration.", :voice => 'alice'
@@ -41,7 +44,7 @@ class TwilioController < ApplicationController
     recordingUrl = params['RecordingUrl']
     recordingDuration = params['RecordingDuration']
     duke = Duke.where(phonenumber:dukenumber).first
-    quest = Quest.new(duke_id: duke.id, audiolink: recordingUrl)
+    quest = Quest.new(duke_id: duke.id, audiolink: recordingUrl, typeofquest:1)
     if quest.save
       response = Twilio::TwiML::Response.new do |r|
         r.Say "It will be done."
@@ -57,9 +60,27 @@ class TwilioController < ApplicationController
   def message
     messageBody = params['Body']
     messageFrom = params['From']
-    @duke = Duke.where(phonenumber: fromnumber).first
-    quest = Quest.new(duke_id:@duke.id, textlink:messageBody)
-    quest.save
+    messageCity = params['FromCity']
+    messageState = params['FromState']
+    messageZip = params['FromZip']
+    client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
+    if @duke = Duke.where(phonenumber: messageFrom).first
+      if @duke.email != nil
+        message = client.messages.create from: Rails.application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'It will be done.'
+        quest = Quest.new(duke_id:@duke.id, textlink:messageBody, typeofquest:2)
+        quest.save
+      else
+        message = client.messages.create from:application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'There was a problem'
+      end
+    else
+      @duke = Duke.new(phonenumber: messageFrom,  city: messageCity, state: messageState, zipcode: messageZip)
+      if @duke.save
+        message = client.messages.create from:application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'A Squire will contact you shortly to complete your registration.'
+      else
+        message = client.messages.create from:application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'There was a problem 2'
+      end
+    end
+
     render_twiml Twilio::TwiML::Response.new
   end
 
@@ -70,6 +91,11 @@ class TwilioController < ApplicationController
 
     render_twiml Twilio::TwiML::Response.new
 
+  end
+
+  def notify
+    client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
+    message = client.messages.create from:'+12183166108', to:'+12183162469', body:'Learning to send SMS you are.'
   end
 
   def connect_customer
@@ -83,6 +109,6 @@ class TwilioController < ApplicationController
    end
 
    render_twiml response
- end
+  end
 
 end

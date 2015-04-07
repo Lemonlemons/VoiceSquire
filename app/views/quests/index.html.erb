@@ -1,5 +1,6 @@
 <h1>Squire</h1>
 <% if user_signed_in? %>
+  <p> There are <%= @quests2.count + @dukes.where(email: nil).count %> available quests</p>
   Logged in as <strong><%= current_user.email %></strong>
   <%= link_to 'Edit Profile',edit_user_registration_path %>
   <%= link_to "Sign out", destroy_user_session_path, method: :delete %>
@@ -37,13 +38,18 @@
     <p>now please watch these training videos</p>
     <a href='<%= dotraining_quest_path(current_user) %>'>Complete Training Here</a>
   <% else %>
-    <img src="smiley.jpg" />
-    <img src="smiley.jpg" />
-    <img src="smiley.jpg" />
+    <img src="assets/smiley.jpg" />
+    <img src="assets/smiley.jpg" />
+    <img src="assets/smiley.jpg" />
 
     <%= button_to "Get a Quest", getmeaquest_quest_path(current_user), :method => "get" %>
 
     <h2>Ongoing Quests</h2>
+    <% @dukes.each do |duke| %>
+      <% if (duke.squire_id == current_user.id) && (duke.registered == false) %>
+        <p><%= link_to duke.phonenumber, edit_duke_path(duke) %></p>
+      <% end %>
+    <% end %>
     <% @quests.each do |quest| %>
       <% if quest.squire_id == current_user.id %>
         <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>

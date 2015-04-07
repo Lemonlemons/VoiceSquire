@@ -1,8 +1,20 @@
 <h1>Squire</h1>
 <% if user_signed_in? %>
+  <p> There are <%= @quests2.count + @dukes.where(email: nil).count %> available quests</p>
   Logged in as <strong><%= current_user.email %></strong>
   <%= link_to 'Edit Profile',edit_user_registration_path %>
   <%= link_to "Sign out", destroy_user_session_path, method: :delete %>
+
+  <button onClick="call()">Make Call</button>
+  <button onClick="disconnect()">End Call</button>
+  <script type="text/javascript" src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+  <script>
+  // works on IE9 and above
+  document.addEventListener("DOMContentLoaded", function(event) { Twilio.Device.setup("<%= @token %>"); });
+  function call() { Twilio.Device.connect({id: <%= @duke.phonenumber %>}); }
+  function disconnect() { Twilio.Device.disconnectAll(); }
+  </script>
+
 
   <%= form_for @duke do |form|%>
 
@@ -15,15 +27,51 @@
       </ul>
     <% end %>
 
-    <h2>Dukes phone number: <%= @duke.phonenumber %></h2>
+    <h3>Dukes phone number: <%= @duke.phonenumber %></h3>
 
-    <p>
-      <%= form.label "Enter firstname below:" %>
-      <%= form.text_field :firstname, autocomplete: "off" %>
-    </p>
-    <p>
-      <%= form.submit "Submit" %>
-    </p>
+    <p><%= form.label "Enter duke's email address below:" %></p>
+    <p><%= form.text_field :email, autocomplete: "off" %></p>
+
+    <p><%= form.label "Enter duke's first name below:" %></p>
+    <p><%= form.text_field :firstname, autocomplete: "off" %></p>
+
+    <p><%= form.label "Enter duke's last name below:" %></p>
+    <p><%= form.text_field :lastname, autocomplete: "off" %></p>
+
+    <div><%= form.label :birthday, "Enter duke's birthday:" %><br />
+    <%= form.date_select :birthday, options={start_year: 1933} %></div>
+
+    <p>Is the duke calling from a land-line?</p>
+    <div><%= form.radio_button :is_landline, true %> <%= form.label :is_landline, "Landline" %>
+         <%= form.radio_button :is_landline, false %> <%= form.label :is_landline, "Not-Landline" %></div>
+
+    <p><%= form.label "Enter duke's mailing address below:" %></p>
+    <p><%= form.text_field :mailingaddress, autocomplete: "off" %></p>
+
+    <p>Is the duke's mailing address the same as their physical address?</p>
+    <div><%= form.radio_button :is_mailingsameasphysicaladdress, true %> <%= form.label :is_mailingsameasphysical, "Same as physical" %>
+         <%= form.radio_button :is_mailingsameasphysicaladdress, false %> <%= form.label :is_mailingsameasphysical, "Different from physical" %></div>
+
+    <p><%= form.label "If so, what is their physical address? (ignore if mailing address is the same)" %></p>
+    <p><%= form.text_field :physicaladdress, autocomplete: "off" %></p>
+
+    <p><%= form.label "Enter the city this duke lives in below:" %></p>
+    <p><%= form.text_field :city, autocomplete: "off" %></p>
+
+    <p><%= form.label "Select the state this duke lives in below:" %></p>
+    <p><%= form.collection_select(:state, State.all, :name, :name) %></p>
+
+    <%= form.hidden_field :country, value: "US" %>
+
+    <p><%= form.label "Enter the zipcode this duke lives in below:" %></p>
+    <p><%= form.text_field :zipcode, autocomplete: "off" %></p>
+
+    <p>What is this duke's preferred method to receive proposals?</p>
+    <div><%= form.radio_button :preferredproposalmethod, 1 %> <%= form.label :preferredproposalmethod, "Email (Best Method)" %>
+         <%= form.radio_button :preferredproposalmethod, 2 %> <%= form.label :preferredproposalmethod, "Text" %>
+         <%= form.radio_button :preferredproposalmethod, 3 %> <%= form.label :preferredproposalmethod, "Phonecall" %></div>
+
+    <p><%= form.submit "Submit" %></p>
 
   <% end %>
 
@@ -31,8 +79,8 @@
 
   <h2>Ongoing Quests</h2>
   <% @dukes.each do |duke| %>
-    <% if duke.squire_id == current_user.id %>
-      <p><%= duke.phonenumber %></p>
+    <% if (duke.squire_id == current_user.id) && (duke.registered == false) %>
+      <p><%= link_to duke.phonenumber, edit_duke_path(duke) %></p>
     <% end %>
   <% end %>
   <% @quests.each do |quest| %>
