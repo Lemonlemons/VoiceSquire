@@ -1,13 +1,13 @@
 Rails.application.configure do
   config.middleware.use Rack::TwilioWebhookAuthentication, Rails.application.secrets.twilio_auth_token, '/voice'
   # Settings specified here will take precedence over those in config/application.rb.
-  config.action_mailer.default_url_options = { :host => "young-citadel-2795.herokuapp.com" }
+  config.action_mailer.default_url_options = { :host => "www.usesquire.com" }
   # Code is not reloaded between requests.
   config.cache_classes = true
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default :charset => "utf-8"
   config.action_mailer.smtp_settings = {
   :address              => "smtp.office365.com",
