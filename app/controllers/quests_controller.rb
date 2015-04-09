@@ -8,6 +8,7 @@ class QuestsController < ApplicationController
   def show
     @quest = Quest.find(params[:id])
     @quests = Quest.all
+    @user = User.where(id: @quest.squire_id).first
   end
 
   def new
@@ -31,6 +32,8 @@ class QuestsController < ApplicationController
     @notes = Note.where(duke_id: @quest.duke_id)
     @dukes = Duke.all
     @duke = Duke.where(id: @quest.duke_id).first
+    @messages = Message.where(quest_id: @quest.id)
+    @message = Message.new
     capability = Twilio::Util::Capability.new Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token
     capability.allow_client_outgoing Rails.application.secrets.twilio_twiml_app_sid
     @token = capability.generate()
@@ -40,7 +43,7 @@ class QuestsController < ApplicationController
     @quest = Quest.find(params[:id])
 
     if @quest.update_attributes(quest_params)
-      redirect_to edit_quest_path(@quest), notice: "Your proposal has been sent"
+      redirect_to edit_quest_path(@quest), notice: "Your quest was saved"
     else
       redirect_to edit_quest_path(@quest), notice: "Something went wrong"
     end
@@ -50,6 +53,68 @@ class QuestsController < ApplicationController
     @quest = Quest.find(params[:id])
     @quest.destroy
     redirect_to quests_path, notice:"Your quest has been deleted"
+  end
+
+  def paybill
+    @quest = Quest.find(params[:id])
+    @duke = Duke.where(id: @quest.duke_id).first
+
+    customer = Stripe::Customer.create(
+      :email => @duke.email,
+      :card  => params[:stripeToken]
+    )
+
+    @quest.stripetoken = customer.id
+    @quest.is_proposalaccepted = true
+    @quest.save
+
+    rescue Stripe::CardError => e
+      flash[:error] = e.message
+      redirect_to quests_path
+  end
+
+  def releasepayment
+    @quest = Quest.find(params[:id])
+    @user = User.where(id: @job.squire_id).first
+
+    Stripe::Charge.create(
+      :customer    => @quest.stripetoken,
+      :amount      => @quest.pricetosquire,
+      :description => 'Squire Stripe Customer',
+      :currency    => 'usd'
+    )
+    @quest.is_completed = true
+    if @quest.save
+      redirect_to quest_path(@quest), notice:"success!~"
+    else
+      redirect_to quest_path(@quest), notice:"There was a problem"
+    end
+
+    rescue Stripe::CardError => e
+      flash[:error] = e.message
+      redirect_to edit_job_path(@job)
+  end
+
+  def submitproof
+    @quest = Quest.find(params[:id])
+    @quest.is_proofsubmitted = true
+    if @quest.save
+      ProposalMailer.proof_email(@quest).deliver_later
+      redirect_to edit_quest_path(@quest), notice: "Proof was sent"
+    else
+      redirect_to edit_quest_path(@quest), notice: "Something went wrong"
+    end
+  end
+
+  def submitproposal
+    @quest = Quest.find(params[:id])
+    @quest.is_proposalsent = true
+    if @quest.save
+      ProposalMailer.proposal_email(@quest).deliver_later
+      redirect_to edit_quest_path(@quest), notice: "Proposal was sent"
+    else
+      redirect_to edit_quest_path(@quest), notice: "Something went wrong"
+    end
   end
 
   def dotraining
@@ -76,6 +141,7 @@ class QuestsController < ApplicationController
       else
         if @quest = Quest.where(squire_id: nil).first
            @quest.squire_id = @user.id
+           @quest.is_assigned = true
            @user.activequests = @user.activequests + 1
            if (@quest.save && @user.save)
              redirect_to edit_quest_path(@quest), notice: "You hath taken on the Quest"
@@ -95,6 +161,6 @@ class QuestsController < ApplicationController
     params.require(:quest).permit(:typeofquest, :audiolink, :textlink, :squire_id, :duke_id,
     :is_assigned, :is_proposalsent, :is_revisionrequested, :is_proposalaccepted, :is_proofsubmitted,
     :is_completed, :timesflagged, :title, :description, :pricetosquire, :totalprice, :squirescut,
-    :picture1, :picture2, :picture3)
+    :picture1, :picture2, :picture3, :proof1, :proof2, :proof3)
   end
 end

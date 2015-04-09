@@ -5,6 +5,9 @@ Rails.application.routes.draw do
     member do
       get 'getmeaquest'
       get 'dotraining'
+      get 'submitproposal'
+      post 'paybill'
+      get 'submitproof'
     end
   end
 

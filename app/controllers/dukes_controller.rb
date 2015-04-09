@@ -39,7 +39,8 @@ class DukesController < ApplicationController
       @duke.registered = true
       @user.activequests = @user.activequests - 1
       if @duke.save && @user.save
-        redirect_to quests_path, notice: "Your duke has been updated"
+        ProposalMailer.welcome_email(@duke).deliver_later
+        redirect_to quests_path, notice: "this duke has been added to the program"
       else
         redirect_to edit_duke_path(@duke), notice: "Save went down"
       end
@@ -58,6 +59,6 @@ class DukesController < ApplicationController
     params.require(:duke).permit(:phonenumber, :firstname, :lastname, :email, :mailingaddress,
     :city, :state, :country, :zipcode, :preferredproposalmethod, :birthday, :is_landline,
     :is_mailingsameasphysicaladdress, :physicaladdress, :is_female, :rating, :numberofquests,
-    :numberofnotes)
+    :numberofnotes, :registered)
   end
 end

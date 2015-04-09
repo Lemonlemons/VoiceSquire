@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150407030449) do
+ActiveRecord::Schema.define(version: 20150409054316) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,18 +46,21 @@ ActiveRecord::Schema.define(version: 20150407030449) do
     t.datetime "updated_at",                                      null: false
     t.integer  "squire_id"
     t.boolean  "registered",                      default: false
+    t.integer  "activequest_id"
   end
 
   create_table "messages", force: :cascade do |t|
     t.string   "title"
     t.text     "body"
-    t.boolean  "is_email",   default: false
-    t.boolean  "is_text",    default: false
+    t.boolean  "is_email",      default: false
+    t.boolean  "is_text",       default: false
     t.integer  "squire_id"
     t.integer  "duke_id"
     t.integer  "quest_id"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.boolean  "sentby_duke",   default: false
+    t.boolean  "sentby_squire", default: false
   end
 
   create_table "notes", force: :cascade do |t|
@@ -85,14 +88,19 @@ ActiveRecord::Schema.define(version: 20150407030449) do
     t.integer  "timesflagged",         default: 0
     t.string   "title"
     t.text     "description"
-    t.integer  "pricetosquire"
-    t.integer  "totalprice"
-    t.integer  "squirescut"
+    t.integer  "pricetosquire",        default: 0
+    t.integer  "totalprice",           default: 0
+    t.integer  "squirescut",           default: 0
     t.string   "picture1"
     t.string   "picture2"
     t.string   "picture3"
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
+    t.string   "stripetoken"
+    t.string   "proof1"
+    t.string   "proof2"
+    t.string   "proof3"
+    t.text     "revision"
   end
 
   create_table "reviews", force: :cascade do |t|

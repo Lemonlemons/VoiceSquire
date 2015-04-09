@@ -9,14 +9,17 @@ class TwilioController < ApplicationController
 
   def voice
     fromnumber = params['From']
-    fromcity = params['FromCity']
-    fromzip = params['FromZip']
-    fromstate = params['FromState']
     if @duke = Duke.where(phonenumber: fromnumber).first
       if @duke.email != nil
-        response = Twilio::TwiML::Response.new do |r|
-          r.Say 'Welcome master, what can I do for you?', :voice => 'alice'
-          r.Record action:"/twilio/record", method:"post"
+        if @duke.activequest_id != nil
+          response = Twilio::TwiML::Response.new do |r|
+            r.Say 'Hello Master, we can only do one quest for you at a time', :voice => 'alice'
+          end
+        else
+          response = Twilio::TwiML::Response.new do |r|
+            r.Say 'Welcome master, what can I do for you?', :voice => 'alice'
+            r.Record action:"/twilio/record", method:"post"
+          end
         end
       else
         response = Twilio::TwiML::Response.new do |r|
@@ -24,7 +27,7 @@ class TwilioController < ApplicationController
         end
       end
     else
-      @duke = Duke.new(phonenumber: fromnumber,  city: fromcity, state: fromstate, zipcode: fromzip)
+      @duke = Duke.new(phonenumber: fromnumber)
       if @duke.save
         response = Twilio::TwiML::Response.new do |r|
           r.Say "Hello, and welcome to Squire. A squire will connect with you shortly to help fill out your new user registration.", :voice => 'alice'
@@ -46,6 +49,8 @@ class TwilioController < ApplicationController
     duke = Duke.where(phonenumber:dukenumber).first
     quest = Quest.new(duke_id: duke.id, audiolink: recordingUrl, typeofquest:1)
     if quest.save
+      duke.activequest_id = quest.id
+      duke.save
       response = Twilio::TwiML::Response.new do |r|
         r.Say "It will be done."
       end
@@ -60,24 +65,28 @@ class TwilioController < ApplicationController
   def message
     messageBody = params['Body']
     messageFrom = params['From']
-    messageCity = params['FromCity']
-    messageState = params['FromState']
-    messageZip = params['FromZip']
     client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
     if @duke = Duke.where(phonenumber: messageFrom).first
       if @duke.email != nil
-        message = client.messages.create from: Rails.application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'It will be done.'
-        quest = Quest.new(duke_id:@duke.id, textlink:messageBody, typeofquest:2)
-        quest.save
+        if @duke.activequest_id != nil
+          textmessage = Message.new(duke_id: @duke.id, quest_id: @duke.activequest_id, is_text: true, sentby_duke: true, body: messageBody)
+          textmessage.save
+        else
+          client.messages.create from: Rails.application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'It will be done.'
+          quest = Quest.new(duke_id:@duke.id, textlink:messageBody, typeofquest:2)
+          quest.save
+          @duke.activequest_id = quest.id
+          @duke.save
+        end
       else
-        message = client.messages.create from:application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'There was a problem'
+        client.messages.create from:application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'A Squire will contact you shortly'
       end
     else
-      @duke = Duke.new(phonenumber: messageFrom,  city: messageCity, state: messageState, zipcode: messageZip)
+      @duke = Duke.new(phonenumber: messageFrom)
       if @duke.save
-        message = client.messages.create from:application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'A Squire will contact you shortly to complete your registration.'
+        client.messages.create from:application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'A Squire will contact you shortly to complete your registration.'
       else
-        message = client.messages.create from:application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'There was a problem 2'
+        client.messages.create from:application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'There was a problem'
       end
     end
 

@@ -43,7 +43,6 @@
     <img src="assets/smiley.jpg" />
 
     <%= button_to "Get a Quest", getmeaquest_quest_path(current_user), :method => "get" %>
-
     <h2>Ongoing Quests</h2>
     <% @dukes.each do |duke| %>
       <% if (duke.squire_id == current_user.id) && (duke.registered == false) %>
@@ -53,9 +52,8 @@
     <% @quests.each do |quest| %>
       <% if quest.squire_id == current_user.id %>
         <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
-        <p><%= quest.description %></p>
         <% if quest.audiolink.nil? %>
-          <p><%= quest.textlink %></p>
+          <p><%= link_to quest.textlink, edit_quest_path(quest) %></p>
         <% else %>
           <audio controls>
             <source src="<%= quest.audiolink %>" type="audio/wav">

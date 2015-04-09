@@ -1,0 +1,66 @@
+<% if @quest.is_completed == true %>
+<% elsif @quest.is_proofsubmitted == true %>
+<% elsif @quest.is_proposalaccepted == true %>
+<% elsif @quest.is_revisionrequested == true %>
+<% elsif @quest.is_proposalsent == true %>
+  <h1><%= @quest.title %></h1>
+  <h2><%= @quest.description %></h2>
+  <h2>Price: <%= @quest.totalprice / 100 %></h2>
+  <h3>Uploaded Images:</h3>
+  <%= image_tag(@quest.picture1, :width => 200) if @quest.picture1.present? %>
+  <%= image_tag(@quest.picture2, :width => 200) if @quest.picture2.present? %>
+  <%= image_tag(@quest.picture3, :width => 200) if @quest.picture3.present? %>
+
+  <% if @quest.audiolink.nil? %>
+    <h2><%= @quest.textlink %></h2>
+  <% else %>
+    <audio controls>
+      <source src="<%= @quest.audiolink %>" type="audio/wav">
+      Your browser does not support the audio element.
+    </audio>
+  <% end %>
+
+  <p>Click the button below to accept the proposal and pay for your Quest.</p>
+  <%= form_tag paybill_quest_path(@quest) do %>
+    <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+            data-key="<%= @user.publishable_key %>"
+            data-description="A Completed Quest"
+            data-amount="<%= @quest.totalprice %>">
+    </script>
+  <% end %>
+
+  <h4>Would you like the squire to make a revision to the proposal?</h4>
+  <%= form_for @quest do |form| %>
+    <p><%= form.label "Enter revision below:" %></p>
+    <p><%= form.text_area :revision, autocomplete: "off" %></p>
+    <%= form.hidden_field :is_revisionrequested, value: true %>
+    <p><%= form.submit "Send" %></p>
+  <% end %>
+
+<% elsif @quest.is_assigned == true %>
+  <h1><%= @quest.title %></h1>
+  <h2><%= @quest.description %></h2>
+  <h2>Price: <%= @quest.totalprice / 100 %></h2>
+  <h3>Uploaded Images:</h3>
+  <%= image_tag(@quest.picture1, :width => 200) if @quest.picture1.present? %>
+  <%= image_tag(@quest.picture2, :width => 200) if @quest.picture2.present? %>
+  <%= image_tag(@quest.picture3, :width => 200) if @quest.picture3.present? %>
+
+  <% if @quest.audiolink.nil? %>
+    <h2><%= @quest.textlink %></h2>
+  <% else %>
+    <audio controls>
+      <source src="<%= @quest.audiolink %>" type="audio/wav">
+      Your browser does not support the audio element.
+    </audio>
+  <% end %>
+
+  <p>Click the button below to accept the proposal and pay for your Quest.</p>
+  <%= image_tag("stripe-pay-button.png") %>
+  <p>(In the Duke's version this button will allow them to pay for the quest)</p>
+  <%= button_to "Submit Proposal", submitproposal_quest_path(@quest), :method => "get" %>
+
+  <p><%= link_to "Back", edit_quest_path(@quest) %></p>
+<% else %>
+  <p>Nope</p>
+<% end %>

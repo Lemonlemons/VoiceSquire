@@ -16,9 +16,12 @@ class MessagesController < ApplicationController
     @message = Message.new(message_params)
 
     if @message.save
-      redirect_to quests_path, notice: "review was saved"
+      @duke = Duke.where(id: @message.duke_id).first
+      client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
+      client.messages.create from: Rails.application.secrets.twilio_phone_number, to:@duke.phonenumber, body:@message.body
+      redirect_to edit_quest_path(@message.quest_id), notice: "Your message has been sent"
     else
-      render "new"
+      redirect_to edit_quest_path(@message.quest_id), notice: "Something went wrong"
     end
   end
 
@@ -31,9 +34,12 @@ class MessagesController < ApplicationController
     @message = Message.find(params[:id])
 
     if @message.update_attributes(message_params)
-      redirect_to edit_message_path(@message), notice: "Your message has been updated"
+      @duke = Duke.where(id: @message.duke_id).first
+      client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
+      client.messages.create from: Rails.application.secrets.twilio_phone_number, to:@duke.phonenumber, body:@message.body
+      redirect_to edit_quest_path(@message.quest_id), notice: "Your message has been sent"
     else
-      redirect_to edit_message_path(@message), notice: "Something went wrong"
+      redirect_to edit_quest_path(@message.quest_id), notice: "Something went wrong"
     end
   end
 
@@ -44,6 +50,6 @@ class MessagesController < ApplicationController
   end
 
   def message_params
-    params.require(:message).permit(:title, :body, :is_email, :is_text, :squire_id, :duke_id, :quest_id)
+    params.require(:message).permit(:title, :body, :is_email, :is_text, :squire_id, :duke_id, :sentby_squire, :sentby_duke, :quest_id)
   end
 end
