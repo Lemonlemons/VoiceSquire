@@ -79,14 +79,14 @@ class TwilioController < ApplicationController
           @duke.save
         end
       else
-        client.messages.create from:application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'A Squire will contact you shortly'
+        client.messages.create from: Rails.application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'A Squire will contact you shortly'
       end
     else
       @duke = Duke.new(phonenumber: messageFrom)
       if @duke.save
-        client.messages.create from:application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'A Squire will contact you shortly to complete your registration.'
+        client.messages.create from: Rails.application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'A Squire will contact you shortly to complete your registration.'
       else
-        client.messages.create from:application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'There was a problem'
+        client.messages.create from: Rails.application.secrets.twilio_phone_number, to:@duke.phonenumber, body:'There was a problem'
       end
     end
 

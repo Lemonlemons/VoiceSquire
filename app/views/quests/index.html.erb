@@ -8,7 +8,7 @@
   <h1>Welcome Back Squire</h1>
 
   <% if current_user.stripecomplete == false %>
-    <img src="assets/smiley.jpg" />
+    <%= image_tag("assets/smiley.jpg", :width => 200) %>
     <p>Please complete stripe sign-up</p>
     <%= link_to image_tag('blue-on-light.png'), user_omniauth_authorize_path(:stripe_connect,
       "stripe_user[email]" => current_user.email,
@@ -33,14 +33,14 @@
       #"stripe_user[past_year_volume]" => 0,
       "stripe_user[currency]" => "usd") %>
   <% elsif current_user.trainingcomplete == false %>
-    <img src="assets/smiley.jpg" />
-    <img src="assets/smiley.jpg" />
+    <%= image_tag("assets/smiley.jpg", :width => 200) %>
+    <%= image_tag("assets/smiley.jpg", :width => 200) %>
     <p>now please watch these training videos</p>
     <a href='<%= dotraining_quest_path(current_user) %>'>Complete Training Here</a>
   <% else %>
-    <img src="assets/smiley.jpg" />
-    <img src="assets/smiley.jpg" />
-    <img src="assets/smiley.jpg" />
+    <%= image_tag("assets/smiley.jpg", :width => 200) %>
+    <%= image_tag("assets/smiley.jpg", :width => 200) %>
+    <%= image_tag("assets/smiley.jpg", :width => 200) %>
 
     <%= button_to "Get a Quest", getmeaquest_quest_path(current_user), :method => "get" %>
     <h2>Ongoing Quests</h2>
