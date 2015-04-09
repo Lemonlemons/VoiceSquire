@@ -34,7 +34,7 @@ class DukesController < ApplicationController
 
   def update
     @duke = Duke.find(params[:id])
-    @user = User.where(id: @duke.squire_id)
+    @user = User.where(id: @duke.squire_id).first
     if @duke.update_attributes(duke_params)
       @duke.registered = true
       @user.activequests = @user.activequests - 1
