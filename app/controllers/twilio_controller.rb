@@ -76,6 +76,7 @@ class TwilioController < ApplicationController
           quest = Quest.new(duke_id:@duke.id, textlink:messageBody, typeofquest:2)
           quest.save
           @duke.activequest_id = quest.id
+          @duke.numberofquests = @duke.numberofquests + 1
           @duke.save
         end
       else

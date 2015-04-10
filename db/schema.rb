@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150409202916) do
+ActiveRecord::Schema.define(version: 20150410225247) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 20150409202916) do
     t.integer  "squire_id"
     t.boolean  "registered",                      default: false
     t.integer  "activequest_id"
+    t.string   "customertoken"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -79,28 +80,31 @@ ActiveRecord::Schema.define(version: 20150409202916) do
     t.text     "textlink"
     t.integer  "squire_id"
     t.integer  "duke_id"
-    t.boolean  "is_assigned",          default: false
-    t.boolean  "is_proposalsent",      default: false
-    t.boolean  "is_revisionrequested", default: false
-    t.boolean  "is_proposalaccepted",  default: false
-    t.boolean  "is_proofsubmitted",    default: false
-    t.boolean  "is_completed",         default: false
-    t.integer  "timesflagged",         default: 0
+    t.boolean  "is_assigned",            default: false
+    t.boolean  "is_proposalsent",        default: false
+    t.boolean  "is_revisionrequested",   default: false
+    t.boolean  "is_proposalaccepted",    default: false
+    t.boolean  "is_proofsubmitted",      default: false
+    t.boolean  "is_completed",           default: false
+    t.integer  "timesflagged",           default: 0
     t.string   "title"
     t.text     "description"
-    t.integer  "pricetosquire",        default: 0
-    t.integer  "totalprice",           default: 0
-    t.integer  "squirescut",           default: 0
+    t.float    "pricetosquire",          default: 0.0
+    t.float    "totalprice",             default: 0.0
+    t.float    "squirescut",             default: 0.0
     t.string   "picture1"
     t.string   "picture2"
     t.string   "picture3"
-    t.datetime "created_at",                           null: false
-    t.datetime "updated_at",                           null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
     t.string   "stripetoken"
     t.string   "proof1"
     t.string   "proof2"
     t.string   "proof3"
     t.text     "revision"
+    t.boolean  "is_revisedproposalsent", default: false
+    t.boolean  "is_revisiontransition",  default: false
+    t.float    "platformfees",           default: 0.0
   end
 
   create_table "reviews", force: :cascade do |t|
@@ -172,6 +176,7 @@ ActiveRecord::Schema.define(version: 20150409202916) do
     t.boolean  "trainingcomplete",            default: false
     t.boolean  "interviewcomplete",           default: false
     t.boolean  "registrationcomplete",        default: false
+    t.boolean  "is_admin",                    default: false
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree

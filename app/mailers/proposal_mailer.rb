@@ -8,6 +8,11 @@ class ProposalMailer < ApplicationMailer
     @quest = quest
     mail( to: @duke.email, subject: 'Proposal from Squire')
   end
+  def revised_proposal_email(quest)
+    @duke = Duke.where(id: quest.duke_id).first
+    @quest = quest
+    mail( to: @duke.email, subject: 'Revised Proposal from Squire')
+  end
   def welcome_email(duke)
     @duke = duke
     mail( to: @duke.email, subject: "Welcome to Squire")

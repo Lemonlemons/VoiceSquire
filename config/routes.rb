@@ -6,8 +6,13 @@ Rails.application.routes.draw do
       get 'getmeaquest'
       get 'dotraining'
       get 'submitproposal'
+      get 'submitrevisedproposal'
+      get 'revisionthanks'
       post 'paybill'
       get 'submitproof'
+      get 'releasepayment'
+      get 'paycharge'
+      get 'paybillreturn'
     end
   end
 

@@ -38,9 +38,9 @@
     <p>now please watch these training videos</p>
     <a href='<%= dotraining_quest_path(current_user) %>'>Complete Training Here</a>
   <% else %>
-    <%= image_tag("assets/smiley.jpg", :width => 200) %>
-    <%= image_tag("assets/smiley.jpg", :width => 200) %>
-    <%= image_tag("assets/smiley.jpg", :width => 200) %>
+    <%= image_tag("smiley.jpg", :width => 200) %>
+    <%= image_tag("smiley.jpg", :width => 200) %>
+    <%= image_tag("smiley.jpg", :width => 200) %>
 
     <%= button_to "Get a Quest", getmeaquest_quest_path(current_user), :method => "get" %>
     <h2>Ongoing Quests</h2>
@@ -50,7 +50,24 @@
       <% end %>
     <% end %>
     <% @quests.each do |quest| %>
-      <% if quest.squire_id == current_user.id %>
+      <% if quest.is_proofsubmitted == false %>
+        <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
+        <% if quest.audiolink.nil? %>
+          <p><%= link_to quest.textlink, edit_quest_path(quest) %></p>
+        <% else %>
+          <audio controls>
+            <source src="<%= quest.audiolink %>" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        <% end %>
+        <hr />
+      <% else %>
+      <% end %>
+    <% end %>
+
+    <h2>Quests awaiting proof confirmation</h2>
+    <% @quests.each do |quest| %>
+      <% if quest.is_proofsubmitted == true %>
         <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
         <% if quest.audiolink.nil? %>
           <p><%= link_to quest.textlink, edit_quest_path(quest) %></p>

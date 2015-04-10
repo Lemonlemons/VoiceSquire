@@ -1,6 +1,8 @@
 class QuestsController < ApplicationController
   def index
-    @quests = Quest.all
+    if current_user != nil
+      @quests = Quest.where("squire_id = ? AND is_completed = ?", current_user.id , false)
+    end
     @quests2 = Quest.where(squire_id: nil)
     @dukes = Duke.all
   end
@@ -9,6 +11,7 @@ class QuestsController < ApplicationController
     @quest = Quest.find(params[:id])
     @quests = Quest.all
     @user = User.where(id: @quest.squire_id).first
+    @duke = Duke.where(id: @quest.duke_id).first
   end
 
   def new
@@ -27,7 +30,7 @@ class QuestsController < ApplicationController
 
   def edit
     @quest = Quest.find(params[:id])
-    @quests = Quest.all
+    @quests = Quest.where("squire_id = ? AND is_completed = ?", current_user.id , false)
     @quests2 = Quest.where(squire_id: nil)
     @notes = Note.where(duke_id: @quest.duke_id)
     @dukes = Duke.all
@@ -41,11 +44,29 @@ class QuestsController < ApplicationController
 
   def update
     @quest = Quest.find(params[:id])
-
-    if @quest.update_attributes(quest_params)
-      redirect_to edit_quest_path(@quest), notice: "Your quest was saved"
+    if params[:quest] != nil
+      if @quest.update_attributes(quest_params)
+        @quest.squirescut = @quest.pricetosquire * 0.04
+        @quest.totalprice = (@quest.pricetosquire * 0.04) + @quest.pricetosquire
+        @quest.save
+        @quest.platformfees = (@quest.totalprice * 0.06) + 0.30
+        @quest.save
+        @quest.totalprice = @quest.totalprice + @quest.platformfees
+        @quest.save
+        if @quest.is_revisiontransition == true
+          redirect_to edit_quest_path(@quest), notice: "Your quest was saved"
+        else
+          if @quest.is_revisionrequested == true
+            redirect_to revisionthanks_quest_path
+          else
+            redirect_to edit_quest_path(@quest), notice: "Your quest was saved"
+          end
+        end
+      else
+        redirect_to edit_quest_path(@quest), notice: "Something went wrong"
+      end
     else
-      redirect_to edit_quest_path(@quest), notice: "Something went wrong"
+      redirect_to edit_quest_path(@quest), notice: "Nothing new to update"
     end
   end
 
@@ -66,25 +87,42 @@ class QuestsController < ApplicationController
 
     @quest.stripetoken = customer.id
     @quest.is_proposalaccepted = true
-    @quest.save
+    @duke.customertoken = customer.id
+    @quest.save && @duke.save
 
     rescue Stripe::CardError => e
       flash[:error] = e.message
       redirect_to quests_path
   end
 
+  def paycharge
+    @quest = Quest.find(params[:id])
+    @duke = Duke.where(id: @quest.duke_id).first
+    @quest.stripetoken = @duke.customertoken
+    @quest.is_proposalaccepted = true
+    if @quest.save
+      redirect_to paybillreturn_quest_path, notice:"Payment Sent"
+    else
+      redirect_to paybillreturn_quest_path, notice:"Error"
+    end
+  end
+
   def releasepayment
     @quest = Quest.find(params[:id])
-    @user = User.where(id: @job.squire_id).first
+    @user = User.where(id: @quest.squire_id).first
+    @user.completedquests = @user.completedquests + 1
 
     Stripe::Charge.create(
       :customer    => @quest.stripetoken,
-      :amount      => @quest.pricetosquire,
+      :amount      => (@quest.totalprice * 100).to_i,
       :description => 'Squire Stripe Customer',
-      :currency    => 'usd'
+      :currency    => 'usd',
+      :application_fee => (@quest.platformfees * 100).to_i,
+      :destination => @user.uid
     )
+
     @quest.is_completed = true
-    if @quest.save
+    if @quest.save && @user.save
       redirect_to quest_path(@quest), notice:"success!~"
     else
       redirect_to quest_path(@quest), notice:"There was a problem"
@@ -92,14 +130,20 @@ class QuestsController < ApplicationController
 
     rescue Stripe::CardError => e
       flash[:error] = e.message
-      redirect_to edit_job_path(@job)
+      redirect_to edit_quest_path(@quest)
   end
 
   def submitproof
     @quest = Quest.find(params[:id])
+    @user = User.where(id: @quest.squire_id).first
+    @duke = Duke.where(id: @quest.duke_id).first
+    @user.activequests = @user.activequests - 1
     @quest.is_proofsubmitted = true
-    if @quest.save
+    @duke.activequest_id = nil
+    if @quest.save && @user.save && @duke.save
       ProposalMailer.proof_email(@quest).deliver_later
+      client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
+      client.messages.create from: Rails.application.secrets.twilio_phone_number, to:@duke.phonenumber, body:"we've completed the job, come again!"
       redirect_to edit_quest_path(@quest), notice: "Proof was sent"
     else
       redirect_to edit_quest_path(@quest), notice: "Something went wrong"
@@ -112,6 +156,19 @@ class QuestsController < ApplicationController
     if @quest.save
       ProposalMailer.proposal_email(@quest).deliver_later
       redirect_to edit_quest_path(@quest), notice: "Proposal was sent"
+    else
+      redirect_to edit_quest_path(@quest), notice: "Something went wrong"
+    end
+  end
+
+  def submitrevisedproposal
+    @quest = Quest.find(params[:id])
+    @quest.is_revisedproposalsent = true
+    @quest.is_revisionrequested = false
+    @quest.is_revisiontransition = false
+    if @quest.save
+      ProposalMailer.revised_proposal_email(@quest).deliver_later
+      redirect_to edit_quest_path(@quest), notice: "Revised Proposal was sent"
     else
       redirect_to edit_quest_path(@quest), notice: "Something went wrong"
     end
@@ -161,6 +218,7 @@ class QuestsController < ApplicationController
     params.require(:quest).permit(:typeofquest, :audiolink, :textlink, :squire_id, :duke_id,
     :is_assigned, :is_proposalsent, :is_revisionrequested, :is_proposalaccepted, :is_proofsubmitted,
     :is_completed, :timesflagged, :title, :description, :pricetosquire, :totalprice, :squirescut,
-    :picture1, :picture2, :picture3, :proof1, :proof2, :proof3)
+    :picture1, :picture2, :picture3, :proof1, :proof2, :proof3, :revision, :is_revisiontransition,
+    :is_revisedproposalsent, :platformfees)
   end
 end
