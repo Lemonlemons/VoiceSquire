@@ -1,316 +1,350 @@
-<h1>Squire</h1>
 <% if user_signed_in? %>
-  <p> There are <%= @quests2.count + @dukes.where(email: nil).count %> available quests</p>
-  Logged in as <strong><%= current_user.email %></strong>
-  <%= link_to 'Edit Profile',edit_user_registration_path %>
-  <%= link_to "Sign out", destroy_user_session_path, method: :delete %>
+  <nav class="navbar navbar-default">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <%= image_tag("3-slim.png", :width => 150, class:"imager2") %>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <div class="nav navbar-nav navbar-right">
+        <div class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Options <span class="caret"></span></button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+            <li role="presentation", id:"options"><%= link_to 'Edit Profile',edit_user_registration_path, id:"options" %></li>
+            <li role="presentation" class="divider", id:"options"></li>
+            <li role="presentation", id:"options"><%= link_to "Sign out", destroy_user_session_path, method: :delete, id:"options" %></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class='row'>
+    <div class='col-md-3'>
 
-  <% if @quest.audiolink.nil? %>
-    <p><%= @quest.textlink %></p>
-  <% else %>
-    <audio controls>
-      <source src="<%= @quest.audiolink %>" type="audio/wav">
-      Your browser does not support the audio element.
-    </audio>
-  <% end %>
-
-  <h2>Notes on this Duke</h2>
-  <p>Firstname: <%= @duke.firstname %></p>
-  <p>Lastname: <%= @duke.lastname %></p>
-  <% if @duke.is_mailingsameasphysicaladdress == false %>
-    <p>Mailing Address: <%= @duke.mailingaddress %></p>
-    <p>Physical Address: <%= @duke.physicaladdress %></p>
-  <% else %>
-    <p>Address: <%= @duke.mailingaddress %></p>
-  <% end %>
-  <p>City: <%= @duke.city %></p>
-  <p>State: <%= @duke.state %></p>
-  <p>Zipcode: <%= @duke.zipcode %></p>
-  <p>Country: <%= @duke.country %></p>
-  <p>Age: <%= (Time.now.utc.to_date.year - @duke.birthday.year - ((Time.now.utc.to_date.month > @duke.birthday.month || (Time.now.utc.to_date.month == @duke.birthday.month && Time.now.utc.to_date.day >= @duke.birthday.day)) ? 0 : 1)).to_s %></p>
-  <% if @duke.is_female == true %>
-    <p>Gender: Female</p>
-  <% else %>
-    <p>Gender: Male</p>
-  <% end %>
-  <% if @duke.is_landline == true %>
-    <p>Phone Style: Landline</p>
-  <% else %>
-    <p>Phone Style: Cell</p>
-  <% end %>
-  <% @notes.each do |note| %>
-    <h3><%= note.title %></h3>
-    <p><%= note.explanation %></p>
-    <hr />
-  <% end %>
-
-  <% if @quest.is_completed == true %>
-    <p>Congrats this Quest is completed!</p>
-
-  <% elsif @quest.is_proofsubmitted == true %>
-    <p>You've submitted proof and it's under review</p>
-
-  <% elsif @quest.is_proposalaccepted == true %>
-    <p>Congrats the duke has accepted and paid for the proposal, please purchase and submit proof you've completed the job</p>
-    <%= form_for @quest do |form|%>
-      <p><%= form.label "Upload Proof" %></p>
-      <p><%= form.file_field :proof1, autocomplete: "off" %></p>
-      <%= image_tag(@quest.proof1, :width => 200) if @quest.proof1.present? %>
-
-      <p><%= form.label "and another" %></p>
-      <p><%= form.file_field :proof2, autocomplete: "off" %></p>
-      <%= image_tag(@quest.proof2, :width => 200) if @quest.proof2.present? %>
-
-      <p><%= form.label "and another" %></p>
-      <p><%= form.file_field :proof3, autocomplete: "off" %></p>
-      <%= image_tag(@quest.proof3, :width => 200) if @quest.proof3.present? %>
-
-      <p><%= form.submit "Save" %></p>
-    <% end %>
-    <%= button_to "Submit Proof (make sure it's saved first)", submitproof_quest_path(@quest), :method => "get" %>
-
-  <% elsif @quest.is_revisiontransition == true %>
-    <%= form_for @quest do |form|%>
-
-      <% if @quest.errors.any? %>
-        <h2>Errors:</h2>
-        <ul>
-          <% @quest.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
+      <h2>Notes on this Duke</h2>
+      <p>Firstname: <%= @duke.firstname %></p>
+      <p>Lastname: <%= @duke.lastname %></p>
+      <% if @duke.is_mailingsameasphysicaladdress == false %>
+        <p>Mailing Address: <%= @duke.mailingaddress %></p>
+        <p>Physical Address: <%= @duke.physicaladdress %></p>
+      <% else %>
+        <p>Address: <%= @duke.mailingaddress %></p>
       <% end %>
-
-      <p><%= form.label "Enter title below:" %></p>
-      <p><%= form.text_field :title, autocomplete: "off" %></p>
-
-      <p><%= form.label "Enter description below:" %></p>
-      <p><%= form.text_area :description, autocomplete: "off" %></p>
-
-      <p><%= form.label "Enter cost of quest:" %></p>
-      <p><%= form.text_field :pricetosquire, autocomplete: "off" %></p>
-
-      <p>Platform fees: <%= number_to_currency(@quest.platformfees) %></p>
-      <p>Squire Fees(your cut!): <%= number_to_currency(@quest.squirescut) %></p>
-      <p>Total Cost of Quest: <%= number_to_currency(@quest.totalprice) %></p>
-
-      <p><%= form.label "Upload a picture!" %></p>
-      <p><%= form.file_field :picture1, autocomplete: "off" %></p>
-      <%= image_tag(@quest.picture1, :width => 200) if @quest.picture1.present? %>
-
-      <p><%= form.label "and another" %></p>
-      <p><%= form.file_field :picture2, autocomplete: "off" %></p>
-      <%= image_tag(@quest.picture2, :width => 200) if @quest.picture2.present? %>
-
-      <p><%= form.label "and another" %></p>
-      <p><%= form.file_field :picture3, autocomplete: "off" %></p>
-      <%= image_tag(@quest.picture3, :width => 200) if @quest.picture3.present? %>
-
-      <p><%= form.submit "Save" %></p>
-
-    <% end %>
-    <h3>The duke has requested the following revision to the proposal, please make those revisions and resubmit.</h3>
-    <p><%= @quest.revision %></p>
-
-    <%= button_to "See how the revised proposal will look to the duke", quest_path(@quest), :method => "get" %>
-    <%= button_to "Resubmit Proposal (make sure it's saved first)", submitrevisedproposal_quest_path(@quest), :method => "get" %>
-
-  <% elsif @quest.is_revisionrequested == true %>
-    <%= form_for @quest do |form|%>
-
-      <% if @quest.errors.any? %>
-        <h2>Errors:</h2>
-        <ul>
-          <% @quest.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
+      <p>City: <%= @duke.city %></p>
+      <p>State: <%= @duke.state %></p>
+      <p>Zipcode: <%= @duke.zipcode %></p>
+      <p>Country: <%= @duke.country %></p>
+      <p>Age: <%= (Time.now.utc.to_date.year - @duke.birthday.year - ((Time.now.utc.to_date.month > @duke.birthday.month || (Time.now.utc.to_date.month == @duke.birthday.month && Time.now.utc.to_date.day >= @duke.birthday.day)) ? 0 : 1)).to_s %></p>
+      <% if @duke.is_female == true %>
+        <p>Gender: Female</p>
+      <% else %>
+        <p>Gender: Male</p>
       <% end %>
-
-      <p><%= form.label "Enter title below:" %></p>
-      <p><%= form.text_field :title, autocomplete: "off" %></p>
-
-      <p><%= form.label "Enter description below:" %></p>
-      <p><%= form.text_area :description, autocomplete: "off" %></p>
-
-      <p><%= form.label "Enter cost of quest:" %></p>
-      <p><%= form.text_field :pricetosquire, autocomplete: "off" %></p>
-
-      <p>Platform fees: <%= number_to_currency(@quest.platformfees) %></p>
-      <p>Squire Fees(your cut!): <%= number_to_currency(@quest.squirescut) %></p>
-      <p>Total Cost of Quest: <%= number_to_currency(@quest.totalprice) %></p>
-
-      <p><%= form.label "Upload a picture!" %></p>
-      <p><%= form.file_field :picture1, autocomplete: "off" %></p>
-      <%= image_tag(@quest.picture1, :width => 200) if @quest.picture1.present? %>
-
-      <p><%= form.label "and another" %></p>
-      <p><%= form.file_field :picture2, autocomplete: "off" %></p>
-      <%= image_tag(@quest.picture2, :width => 200) if @quest.picture2.present? %>
-
-      <p><%= form.label "and another" %></p>
-      <p><%= form.file_field :picture3, autocomplete: "off" %></p>
-      <%= image_tag(@quest.picture3, :width => 200) if @quest.picture3.present? %>
-
-      <%= form.hidden_field :is_revisiontransition, value: true %>
-
-      <p><%= form.submit "Save" %></p>
-
-    <% end %>
-    <h3>The duke has requested the following revision to the proposal, please make those revisions and resubmit.</h3>
-    <p><%= @quest.revision %></p>
-
-    <%= button_to "See how the revised proposal will look to the duke", quest_path(@quest), :method => "get" %>
-    <%= button_to "Resubmit Proposal (make sure it's saved first)", submitrevisedproposal_quest_path(@quest), :method => "get" %>
-
-  <% elsif @quest.is_revisedproposalsent == true %>
-    <p>Alright! You've submitted the revised proposal. Wait to hear what the duke thinks</p>
-
-  <% elsif @quest.is_proposalsent == true %>
-    <p>Alright! You've submitted the proposal. Wait to hear what the duke thinks</p>
-
-  <% elsif @quest.is_assigned == true %>
-    <%= form_for @quest do |form|%>
-
-      <% if @quest.errors.any? %>
-        <h2>Errors:</h2>
-        <ul>
-          <% @quest.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
+      <% if @duke.is_landline == true %>
+        <p>Phone Style: Landline</p>
+      <% else %>
+        <p>Phone Style: Cell</p>
       <% end %>
-
-      <p><%= form.label "Enter title below:" %></p>
-      <p><%= form.text_field :title, autocomplete: "off" %></p>
-
-      <p><%= form.label "Enter description below:" %></p>
-      <p><%= form.text_area :description, autocomplete: "off" %></p>
-
-      <p><%= form.label "Enter cost of quest:" %></p>
-      <p><%= form.text_field :pricetosquire, autocomplete: "off" %></p>
-
-      <p>Platform fees: <%= number_to_currency(@quest.platformfees) %></p>
-      <p>Squire Fees(your cut!): <%= number_to_currency(@quest.squirescut) %></p>
-      <p>Total Cost of Quest: <%= number_to_currency(@quest.totalprice) %></p>
-
-      <p><%= form.label "Upload a picture!" %></p>
-      <p><%= form.file_field :picture1, autocomplete: "off" %></p>
-      <%= image_tag(@quest.picture1, :width => 200) if @quest.picture1.present? %>
-
-      <p><%= form.label "and another" %></p>
-      <p><%= form.file_field :picture2, autocomplete: "off" %></p>
-      <%= image_tag(@quest.picture2, :width => 200) if @quest.picture2.present? %>
-
-      <p><%= form.label "and another" %></p>
-      <p><%= form.file_field :picture3, autocomplete: "off" %></p>
-      <%= image_tag(@quest.picture3, :width => 200) if @quest.picture3.present? %>
-
-      <p><%= form.submit "Save" %></p>
-
-    <% end %>
-    <p>This quest is yours! complete the proposal and submit!</p>
-    <%= button_to "See how the proposal will look to the duke", quest_path(@quest), :method => "get" %>
-    <%= button_to "Submit Proposal (be sure it's saved first)", submitproposal_quest_path(@quest), :method => "get" %>
-
-  <% else %>
-    <p>This shouldn't appear</p>
-  <% end %>
-
-  <h2>Contact the duke</h2>
-
-  <h3>Preferred method of contact:</h3>
-  <% case @duke.preferredproposalmethod %>
-    <% when 1 %>
-      <p>Email preferred</p>
-    <% when 2 %>
-      <p>Text preferred</p>
-    <% when 3 %>
-      <p>Phonecall preferred</p>
-  <% end %>
-
-  <h4>Call the Duke</h4>
-  <button onClick="call()">Make Call</button>
-  <button onClick="disconnect()">End Call</button>
-  <script type="text/javascript" src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
-  <script>
-  // works on IE9 and above
-  document.addEventListener("DOMContentLoaded", function(event) { Twilio.Device.setup("<%= @token %>"); });
-  function call() { Twilio.Device.connect({id: <%= @duke.phonenumber %>}); }
-  function disconnect() { Twilio.Device.disconnectAll(); }
-  </script>
-
-  <h4>Messages</h4>
-  <% @messages.each do |message| %>
-    <% if message.sentby_duke == true %>
-      <%= "From: Duke" %>
-      <%= message.body %><br />
-    <% elsif message.sentby_squire == true %>
-      <%= "From: Squire" %>
-      <%= message.body %><br />
-    <% else %>
-      <%= "this shouldn't happen" %><br />
-    <% end %>
-  <% end %>
-
-  <h4>Send the Duke a Text:</h4>
-  <%= form_for @message do |form| %>
-    <p><%= form.label "Enter message below:" %></p>
-    <p><%= form.text_area :body, autocomplete: "off" %></p>
-    <%= form.hidden_field :squire_id, value: @quest.squire_id %>
-    <%= form.hidden_field :duke_id, value: @quest.duke_id %>
-    <%= form.hidden_field :quest_id, value: @quest.id %>
-    <%= form.hidden_field :is_text, value: true %>
-    <%= form.hidden_field :sentby_squire, value: true %>
-    <p><%= form.submit "Send" %></p>
-  <% end %>
-
-  <%= button_to "Get a Quest", getmeaquest_quest_path(current_user), :method => "get" %>
-
-  <h2>Ongoing Quests</h2>
-  <% @dukes.each do |duke| %>
-    <% if (duke.squire_id == current_user.id) && (duke.registered == false) %>
-      <p><%= link_to duke.phonenumber, edit_duke_path(duke) %></p>
-    <% end %>
-  <% end %>
-  <% @quests.each do |quest| %>
-    <% if quest.is_proofsubmitted == false %>
-      <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
-      <% if quest.audiolink.nil? %>
-        <p><%= quest.textlink %></p>
+      <% @notes.each do |note| %>
+        <h3><%= note.title %></h3>
+        <p><%= note.explanation %></p>
+        <hr />
+      <% end %>
+    </div>
+    <div class="col-md-6">
+      <% if @quest.audiolink.nil? %>
+        <h2><%= @quest.textlink %></h2>
       <% else %>
         <audio controls>
           <source src="<%= @quest.audiolink %>" type="audio/wav">
           Your browser does not support the audio element.
         </audio>
       <% end %>
-      <hr />
-    <% end %>
-  <% end %>
 
-  <h2>Quests awaiting proof confirmation</h2>
-  <% @quests.each do |quest| %>
-    <% if quest.is_proofsubmitted == true %>
-      <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
-      <% if quest.audiolink.nil? %>
-        <p><%= link_to quest.textlink, edit_quest_path(quest) %></p>
+      <% if @quest.is_completed == true %>
+        <p>Congrats this Quest is completed!</p>
+
+      <% elsif @quest.is_proofsubmitted == true %>
+        <p>You've submitted proof and it's under review</p>
+
+      <% elsif @quest.is_proposalaccepted == true %>
+        <p>Congrats the duke has accepted and paid for the proposal, please purchase and submit proof you've completed the job</p>
+        <%= form_for @quest do |form|%>
+          <p><%= form.label "Upload Proof" %></p>
+          <p><%= form.file_field :proof1, autocomplete: "off" %></p>
+          <%= image_tag(@quest.proof1, :width => 200) if @quest.proof1.present? %>
+
+          <p><%= form.label "and another" %></p>
+          <p><%= form.file_field :proof2, autocomplete: "off" %></p>
+          <%= image_tag(@quest.proof2, :width => 200) if @quest.proof2.present? %>
+
+          <p><%= form.label "and another" %></p>
+          <p><%= form.file_field :proof3, autocomplete: "off" %></p>
+          <%= image_tag(@quest.proof3, :width => 200) if @quest.proof3.present? %>
+
+          <p><%= form.submit "Save" %></p>
+        <% end %>
+        <%= button_to "Submit Proof (make sure it's saved first)", submitproof_quest_path(@quest), :method => "get" %>
+
+      <% elsif @quest.is_revisiontransition == true %>
+        <%= form_for @quest do |form|%>
+
+          <% if @quest.errors.any? %>
+            <h2>Errors:</h2>
+            <ul>
+              <% @quest.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          <% end %>
+
+          <p><%= form.label "Enter title below:" %></p>
+          <p><%= form.text_field :title, autocomplete: "off" %></p>
+
+          <p><%= form.label "Enter description below:" %></p>
+          <p><%= form.text_area :description, autocomplete: "off" %></p>
+
+          <p><%= form.label "Enter cost of quest:" %></p>
+          <p><%= form.text_field :pricetosquire, autocomplete: "off" %></p>
+
+          <p>Platform fees: <%= number_to_currency(@quest.platformfees) %></p>
+          <p>Squire Fees(your cut!): <%= number_to_currency(@quest.squirescut) %></p>
+          <p>Total Cost of Quest: <%= number_to_currency(@quest.totalprice) %></p>
+
+          <p><%= form.label "Upload a picture!" %></p>
+          <p><%= form.file_field :picture1, autocomplete: "off" %></p>
+          <%= image_tag(@quest.picture1, :width => 200) if @quest.picture1.present? %>
+
+          <p><%= form.label "and another" %></p>
+          <p><%= form.file_field :picture2, autocomplete: "off" %></p>
+          <%= image_tag(@quest.picture2, :width => 200) if @quest.picture2.present? %>
+
+          <p><%= form.label "and another" %></p>
+          <p><%= form.file_field :picture3, autocomplete: "off" %></p>
+          <%= image_tag(@quest.picture3, :width => 200) if @quest.picture3.present? %>
+
+          <p><%= form.submit "Save" %></p>
+
+        <% end %>
+        <h3>The duke has requested the following revision to the proposal, please make those revisions and resubmit.</h3>
+        <p><%= @quest.revision %></p>
+
+        <%= button_to "See how the revised proposal will look to the duke", quest_path(@quest), :method => "get" %>
+        <%= button_to "Resubmit Proposal (make sure it's saved first)", submitrevisedproposal_quest_path(@quest), :method => "get" %>
+
+      <% elsif @quest.is_revisionrequested == true %>
+        <%= form_for @quest do |form|%>
+
+          <% if @quest.errors.any? %>
+            <h2>Errors:</h2>
+            <ul>
+              <% @quest.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          <% end %>
+
+          <p><%= form.label "Enter title below:" %></p>
+          <p><%= form.text_field :title, autocomplete: "off" %></p>
+
+          <p><%= form.label "Enter description below:" %></p>
+          <p><%= form.text_area :description, autocomplete: "off" %></p>
+
+          <p><%= form.label "Enter cost of quest:" %></p>
+          <p><%= form.text_field :pricetosquire, autocomplete: "off" %></p>
+
+          <p>Platform fees: <%= number_to_currency(@quest.platformfees) %></p>
+          <p>Squire Fees(your cut!): <%= number_to_currency(@quest.squirescut) %></p>
+          <p>Total Cost of Quest: <%= number_to_currency(@quest.totalprice) %></p>
+
+          <p><%= form.label "Upload a picture!" %></p>
+          <p><%= form.file_field :picture1, autocomplete: "off" %></p>
+          <%= image_tag(@quest.picture1, :width => 200) if @quest.picture1.present? %>
+
+          <p><%= form.label "and another" %></p>
+          <p><%= form.file_field :picture2, autocomplete: "off" %></p>
+          <%= image_tag(@quest.picture2, :width => 200) if @quest.picture2.present? %>
+
+          <p><%= form.label "and another" %></p>
+          <p><%= form.file_field :picture3, autocomplete: "off" %></p>
+          <%= image_tag(@quest.picture3, :width => 200) if @quest.picture3.present? %>
+
+          <%= form.hidden_field :is_revisiontransition, value: true %>
+
+          <p><%= form.submit "Save" %></p>
+
+        <% end %>
+        <h3>The duke has requested the following revision to the proposal, please make those revisions and resubmit.</h3>
+        <p><%= @quest.revision %></p>
+
+        <%= button_to "See how the revised proposal will look to the duke", quest_path(@quest), :method => "get" %>
+        <%= button_to "Resubmit Proposal (make sure it's saved first)", submitrevisedproposal_quest_path(@quest), :method => "get" %>
+
+      <% elsif @quest.is_revisedproposalsent == true %>
+        <p>Alright! You've submitted the revised proposal. Wait to hear what the duke thinks</p>
+
+      <% elsif @quest.is_proposalsent == true %>
+        <p>Alright! You've submitted the proposal. Wait to hear what the duke thinks</p>
+
+      <% elsif @quest.is_assigned == true %>
+        <%= form_for @quest do |form|%>
+
+          <% if @quest.errors.any? %>
+            <h2>Errors:</h2>
+            <ul>
+              <% @quest.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          <% end %>
+
+          <p><%= form.label "Enter title below:" %></p>
+          <p><%= form.text_field :title, autocomplete: "off" %></p>
+
+          <p><%= form.label "Enter description below:" %></p>
+          <p><%= form.text_area :description, autocomplete: "off" %></p>
+
+          <p><%= form.label "Enter cost of quest:" %></p>
+          <p><%= form.text_field :pricetosquire, autocomplete: "off" %></p>
+
+          <p>Platform fees: <%= number_to_currency(@quest.platformfees) %></p>
+          <p>Squire Fees(your cut!): <%= number_to_currency(@quest.squirescut) %></p>
+          <p>Total Cost of Quest: <%= number_to_currency(@quest.totalprice) %></p>
+
+          <p><%= form.label "Upload a picture!" %></p>
+          <p><%= form.file_field :picture1, autocomplete: "off" %></p>
+          <%= image_tag(@quest.picture1, :width => 200) if @quest.picture1.present? %>
+
+          <p><%= form.label "and another" %></p>
+          <p><%= form.file_field :picture2, autocomplete: "off" %></p>
+          <%= image_tag(@quest.picture2, :width => 200) if @quest.picture2.present? %>
+
+          <p><%= form.label "and another" %></p>
+          <p><%= form.file_field :picture3, autocomplete: "off" %></p>
+          <%= image_tag(@quest.picture3, :width => 200) if @quest.picture3.present? %>
+
+          <p><%= form.submit "Save" %></p>
+
+        <% end %>
+        <p>Is this quest unreasonable or just plan a joke? Click the flag button below</p>
+        <%= button_to "Flag Quest", flagquest_quest_path(@quest), :method => "get" %>
+
+        <p>This quest is yours! complete the proposal and submit!</p>
+        <%= button_to "See how the proposal will look to the duke", quest_path(@quest), :method => "get" %>
+        <%= button_to "Submit Proposal (be sure it's saved first)", submitproposal_quest_path(@quest), :method => "get" %>
+
       <% else %>
-        <audio controls>
-          <source src="<%= quest.audiolink %>" type="audio/wav">
-          Your browser does not support the audio element.
-        </audio>
+        <p>This shouldn't appear</p>
       <% end %>
-      <hr />
-    <% else %>
+    </div>
+    <div class='col-md-3'>
+      <div class='well well-sm'>
+        <p>Logged in as <strong><%= current_user.email %></strong></br>
+        There are <%= @quests2.count + @dukes.where(email: nil).count %> available quests</p>
+        <%= button_to "Get a Quest", getmeaquest_quest_path(current_user), :method => "get", class: 'btn btn-default' %>
+      </div>
+      <div class='well well-sm'>
+        <h2>Ongoing Quests</h2>
+        <% @dukes.each do |duke| %>
+          <% if (duke.squire_id == current_user.id) && (duke.registered == false) %>
+            <p><%= link_to duke.phonenumber, edit_duke_path(duke) %></p>
+            <hr />
+          <% end %>
+        <% end %>
+        <% @quests.each do |quest| %>
+          <% if quest.is_proofsubmitted == false %>
+            <% if quest.title != nil %>
+              <h3><%= quest.title %></h3>
+            <% end %>
+            <% if quest.audiolink.nil? %>
+              <h4><%= link_to quest.textlink, edit_quest_path(quest) %></h4>
+            <% else %>
+              <%= link_to "Audio Quest", edit_quest_path(quest) %>
+              <audio controls>
+                <source src="<%= quest.audiolink %>" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            <% end %>
+            <hr />
+          <% end %>
+        <% end %>
+      </div>
+      <div class="well well-sm">
+        <h2>Quests awaiting proof confirmation</h2>
+        <% @quests.each do |quest| %>
+          <% if quest.is_proofsubmitted == true %>
+            <h3><%= quest.title %></h3>
+            <% if quest.audiolink.nil? %>
+              <h4><%= link_to quest.textlink, edit_quest_path(quest) %></h4>
+            <% else %>
+              <audio controls>
+                <source src="<%= quest.audiolink %>" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            <% end %>
+            <hr />
+          <% else %>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="well well-sm">
+        <h2>Stats</h2>
+        <p>Number of Quests Completed: <%= current_user.completedquests %></p>
+        <p>Number of Notes Completed: <%= current_user.numberofnotes %></p>
+        <p>Number of Reviews Received: <%= current_user.numberofreviews %></p>
+        <p>Review Rating: %<%= current_user.reviewpercentage %></p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <h2>Contact the duke</h2>
+
+    <h3>Preferred method of contact:</h3>
+    <% case @duke.preferredproposalmethod %>
+      <% when 1 %>
+        <p>Email preferred</p>
+      <% when 2 %>
+        <p>Text preferred</p>
+      <% when 3 %>
+        <p>Phonecall preferred</p>
     <% end %>
-  <% end %>
 
-  <h2>Stats</h2>
-  <p>Number of Quests Completed: <%= current_user.completedquests %></p>
-  <p>Number of Notes Completed: <%= current_user.numberofnotes %></p>
-  <p>Number of Reviews Received: <%= current_user.numberofreviews %></p>
-  <p>Review Rating: %<%= current_user.reviewpercentage %></p>
+    <h4>Call the Duke</h4>
+    <button onClick="call()">Make Call</button>
+    <button onClick="disconnect()">End Call</button>
+    <script type="text/javascript" src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+    <script>
+    // works on IE9 and above
+    document.addEventListener("DOMContentLoaded", function(event) { Twilio.Device.setup("<%= @token %>"); });
+    function call() { Twilio.Device.connect({id: <%= @duke.phonenumber %>}); }
+    function disconnect() { Twilio.Device.disconnectAll(); }
+    </script>
 
+    <h4>Messages</h4>
+    <% @messages.each do |message| %>
+      <% if message.sentby_duke == true %>
+        <%= "From: Duke" %>
+        <%= message.body %><br />
+      <% elsif message.sentby_squire == true %>
+        <%= "From: Squire" %>
+        <%= message.body %><br />
+      <% else %>
+        <%= "this shouldn't happen" %><br />
+      <% end %>
+    <% end %>
+
+    <h4>Send the Duke a Text:</h4>
+    <%= form_for @message do |form| %>
+      <p><%= form.label "Enter message below:" %></p>
+      <p><%= form.text_area :body, autocomplete: "off" %></p>
+      <%= form.hidden_field :squire_id, value: @quest.squire_id %>
+      <%= form.hidden_field :duke_id, value: @quest.duke_id %>
+      <%= form.hidden_field :quest_id, value: @quest.id %>
+      <%= form.hidden_field :is_text, value: true %>
+      <%= form.hidden_field :sentby_squire, value: true %>
+      <p><%= form.submit "Send" %></p>
+    <% end %>
+  </div>
 <% else %>
   <%= link_to "Sign up", new_user_registration_path %>
   <%= link_to "Sign in", new_user_session_path %>

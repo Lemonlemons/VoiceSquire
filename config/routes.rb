@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       get 'releasepayment'
       get 'paycharge'
       get 'paybillreturn'
+      get 'flagquest'
     end
   end
 
@@ -20,6 +21,7 @@ Rails.application.routes.draw do
   resources :messages
   resources :reviews
   resources :notes
+  resources :users
 
   post 'twilio/voice' => 'twilio#voice'
   post 'twilio/record' => "twilio#record"

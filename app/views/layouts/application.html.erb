@@ -2,16 +2,33 @@
 <html>
 <head>
   <title>Squire</title>
+
+  <!-- Bootstrap Core CSS -->
+  <link href='/assets/bootstrap.css' rel='stylesheet'>
+  <link href="/assets/styles.css" rel="stylesheet">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-
-  <p class="notice"><%= notice %></p>
-  <p class="alert"><%= alert %></p>
-
+  <% if notice != nil %>
+    <div class="alert alert-info">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <strong><%= notice %></strong>
+    </div>
+  <% elsif alert != nil %>
+    <div class="alert alert-warning">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <strong><%= alert %></strong>
+    </div>
+  <% end %>
   <%= yield %>
-
+  <!-- jQuery -->
+  <script src="/assets/jquery.js"></script>
+  <!-- Bootstrap Core JavaScript -->
+  <script src='/assets/bootstrap.js'></script>
+  <script src="/assets/scripts.js"></script>
 </body>
 </html>

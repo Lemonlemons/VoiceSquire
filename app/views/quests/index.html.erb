@@ -1,99 +1,324 @@
-<h1>Squire</h1>
 <% if user_signed_in? %>
-  <p> There are <%= @quests2.count + @dukes.where(email: nil).count %> available quests</p>
-  Logged in as <strong><%= current_user.email %></strong>
-  <%= link_to 'Edit Profile',edit_user_registration_path %>
-  <%= link_to "Sign out", destroy_user_session_path, method: :delete %>
+  <nav class="navbar navbar-default">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <%= image_tag("3-slim.png", :width => 150, class:"imager2") %>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <div class="nav navbar-nav navbar-right">
+        <div class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Options <span class="caret"></span></button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+            <li role="presentation", id:"options"><%= link_to 'Edit Profile',edit_user_registration_path, id:"options" %></li>
+            <li role="presentation" class="divider", id:"options"></li>
+            <li role="presentation", id:"options"><%= link_to "Sign out", destroy_user_session_path, method: :delete, id:"options" %></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class='row'>
+    <div class='col-md-9'>
+      <h1>Welcome Back Squire</h1>
 
-  <h1>Welcome Back Squire</h1>
-
-  <% if current_user.stripecomplete == false %>
-    <%= image_tag("assets/smiley.jpg", :width => 200) %>
-    <p>Please complete stripe sign-up</p>
-    <%= link_to image_tag('blue-on-light.png'), user_omniauth_authorize_path(:stripe_connect,
-      "stripe_user[email]" => current_user.email,
-      "stripe_user[url]" => "http://www.usesquire.com",
-      "stripe_user[country]" => "US",
-      "stripe_user[phone_number]" => current_user.phonenumber,
-      "stripe_user[business_name]" => "Squire" + current_user.id.to_s,
-      "stripe_user[business_type]" => "sole_prop",
-      "stripe_user[first_name]" => current_user.firstname,
-      "stripe_user[last_name]" => current_user.lastname,
-      "stripe_user[dob_day]" => current_user.birthday.day,
-      "stripe_user[dob_month]" => current_user.birthday.month,
-      "stripe_user[dob_year]" => current_user.birthday.year,
-      "stripe_user[street_address]" => current_user.address,
-      "stripe_user[city]" => current_user.city,
-      "stripe_user[state]" => current_user.state,
-      "stripe_user[zip]" => current_user.zipcode,
-      "stripe_user[physical_product]" => "false",
-      "stripe_user[product_category]" => "consulting",
-      "stripe_user[product_description]" => "Completion of a service or assignment on behalf of a customer",
-      #"stripe_user[average_payment]" => 1000,
-      #"stripe_user[past_year_volume]" => 0,
-      "stripe_user[currency]" => "usd") %>
-  <% elsif current_user.trainingcomplete == false %>
-    <%= image_tag("assets/smiley.jpg", :width => 200) %>
-    <%= image_tag("assets/smiley.jpg", :width => 200) %>
-    <p>now please watch these training videos</p>
-    <a href='<%= dotraining_quest_path(current_user) %>'>Complete Training Here</a>
-  <% else %>
-    <%= image_tag("smiley.jpg", :width => 200) %>
-    <%= image_tag("smiley.jpg", :width => 200) %>
-    <%= image_tag("smiley.jpg", :width => 200) %>
-
-    <%= button_to "Get a Quest", getmeaquest_quest_path(current_user), :method => "get" %>
-    <h2>Ongoing Quests</h2>
-    <% @dukes.each do |duke| %>
-      <% if (duke.squire_id == current_user.id) && (duke.registered == false) %>
-        <p><%= link_to duke.phonenumber, edit_duke_path(duke) %></p>
-      <% end %>
-    <% end %>
-    <% @quests.each do |quest| %>
-      <% if quest.is_proofsubmitted == false %>
-        <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
-        <% if quest.audiolink.nil? %>
-          <p><%= link_to quest.textlink, edit_quest_path(quest) %></p>
-        <% else %>
-          <audio controls>
-            <source src="<%= quest.audiolink %>" type="audio/wav">
-            Your browser does not support the audio element.
-          </audio>
-        <% end %>
-        <hr />
+      <% if current_user.stripecomplete == false %>
+        <h3>Registration: <i class="fa fa-check"></i></h3>
+        <h3>Sign-Up for Stripe: </h3>
+        <h3>Complete Training Videos: </h3>
+        <h2>Please complete stripe sign-up</h2>
+        <%= link_to image_tag('blue-on-light.png'), user_omniauth_authorize_path(:stripe_connect,
+          "stripe_user[email]" => current_user.email,
+          "stripe_user[url]" => "http://www.usesquire.com",
+          "stripe_user[country]" => "US",
+          "stripe_user[phone_number]" => current_user.phonenumber,
+          "stripe_user[business_name]" => "Squire" + current_user.id.to_s,
+          "stripe_user[business_type]" => "sole_prop",
+          "stripe_user[first_name]" => current_user.firstname,
+          "stripe_user[last_name]" => current_user.lastname,
+          "stripe_user[dob_day]" => current_user.birthday.day,
+          "stripe_user[dob_month]" => current_user.birthday.month,
+          "stripe_user[dob_year]" => current_user.birthday.year,
+          "stripe_user[street_address]" => current_user.address,
+          "stripe_user[city]" => current_user.city,
+          "stripe_user[state]" => current_user.state,
+          "stripe_user[zip]" => current_user.zipcode,
+          "stripe_user[physical_product]" => "false",
+          "stripe_user[product_category]" => "consulting",
+          "stripe_user[product_description]" => "Completion of a service or assignment on behalf of a customer",
+          #"stripe_user[average_payment]" => 1000,
+          #"stripe_user[past_year_volume]" => 0,
+          "stripe_user[currency]" => "usd") %>
+      <% elsif current_user.trainingcomplete == false %>
+        <h3>Registration: <i class="fa fa-check"></i></h3>
+        <h3>Sign-Up for Stripe: <i class="fa fa-check"></i></h3>
+        <h3>Complete Training Videos: </h3>
+        <h2>now please watch these training videos</h2>
+        <a href='<%= dotraining_quest_path(current_user) %>'>Complete Training Here</a>
       <% else %>
-      <% end %>
-    <% end %>
-
-    <h2>Quests awaiting proof confirmation</h2>
-    <% @quests.each do |quest| %>
-      <% if quest.is_proofsubmitted == true %>
-        <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
-        <% if quest.audiolink.nil? %>
-          <p><%= link_to quest.textlink, edit_quest_path(quest) %></p>
-        <% else %>
-          <audio controls>
-            <source src="<%= quest.audiolink %>" type="audio/wav">
-            Your browser does not support the audio element.
-          </audio>
+        <h3>Registration: <i class="fa fa-check"></i></h3>
+        <h3>Sign-Up for Stripe: <i class="fa fa-check"></i></h3>
+        <h3>Complete Training Videos: <i class="fa fa-check"></i></h3>
+    </div>
+    <div class='col-md-3'>
+      <div class='well well-sm'>
+        <p>Logged in as <strong><%= current_user.email %></strong></br>
+        There are <%= @quests2.count + @dukes.where(email: nil).count %> available quests</p>
+        <%= button_to "Get a Quest", getmeaquest_quest_path(current_user), :method => "get", class: 'btn btn-default' %>
+      </div>
+      <div class='well well-sm'>
+        <h2>Ongoing Quests</h2>
+        <% @dukes.each do |duke| %>
+          <% if (duke.squire_id == current_user.id) && (duke.registered == false) %>
+            <p><%= link_to duke.phonenumber, edit_duke_path(duke) %></p>
+            <hr />
+          <% end %>
         <% end %>
-        <hr />
-      <% else %>
-      <% end %>
-    <% end %>
-
-    <h2>Stats</h2>
-    <p>Number of Quests Completed: <%= current_user.completedquests %></p>
-    <p>Number of Notes Completed: <%= current_user.numberofnotes %></p>
-    <p>Number of Reviews Received: <%= current_user.numberofreviews %></p>
-    <p>Review Rating: %<%= current_user.reviewpercentage %></p>
-  <% end %>
-
+        <% @quests.each do |quest| %>
+          <% if quest.is_proofsubmitted == false %>
+            <% if quest.title != nil %>
+              <h3><%= quest.title %></h3>
+            <% end %>
+            <% if quest.audiolink.nil? %>
+              <h4><%= link_to quest.textlink, edit_quest_path(quest) %></h4>
+            <% else %>
+              <%= link_to "Audio Quest", edit_quest_path(quest) %>
+              <audio controls>
+                <source src="<%= quest.audiolink %>" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            <% end %>
+            <hr />
+          <% end %>
+        <% end %>
+      </div>
+      <div class="well well-sm">
+        <h2>Quests awaiting proof confirmation</h2>
+        <% @quests.each do |quest| %>
+          <% if quest.is_proofsubmitted == true %>
+            <h3><%= quest.title %></h3>
+            <% if quest.audiolink.nil? %>
+              <h4><%= link_to quest.textlink, edit_quest_path(quest) %></h4>
+            <% else %>
+              <audio controls>
+                <source src="<%= quest.audiolink %>" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            <% end %>
+            <hr />
+          <% else %>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="well well-sm">
+        <h2>Stats</h2>
+        <p>Number of Quests Completed: <%= current_user.completedquests %></p>
+        <p>Number of Notes Completed: <%= current_user.numberofnotes %></p>
+        <p>Number of Reviews Received: <%= current_user.numberofreviews %></p>
+        <p>Review Rating: %<%= current_user.reviewpercentage %></p>
+        <% end %>
+      </div>
+    </div>
+  </div>
 <% else %>
-  <%= link_to "Sign up", new_user_registration_path %>
-  <%= link_to "Sign in", new_user_session_path %>
-  <hr />
-  <h1>Welcome to Squire</h1>
-  <p>Please Sign Up!</p>
+  <!-- Navigation -->
+  <nav class="navbar navbar-default">
+      <div class="navbar-header page-scroll">
+        <%= image_tag("3-slim.png", :width => 150, class:"imager2") %>
+      </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+              <li class="hidden">
+                  <a href="#page-top"></a>
+              </li>
+              <li class="page-scroll">
+                  <a href="#sec2">The Process</a>
+              </li>
+              <li class="page-scroll">
+                  <a href="#sec3">Examples</a>
+              </li>
+              <li class="page-scroll">
+                  <a href="#sec4">About</a>
+              </li>
+              <li class="page-scroll">
+                  <a href="#sec5">Become a Squire</a>
+              </li>
+              <li class="page-scroll">
+                  <a href="#sec7">Contact Us</a>
+              </li>
+              <li class="page-scroll">
+                <%= button_to "Sign up", new_user_registration_path, class: 'btn btn-default btn-margin-left', id:"lemon" %>
+              </li>
+              <li class="page-scroll">
+                &nbsp;
+              </li>
+              <li class="page-scroll">
+                <%= button_to "Sign in", new_user_session_path, class: 'btn btn-primary btn-margin-left' %>
+              </li>
+          </ul>
+      </div>
+  </nav>
+  <div class="header alt vert">
+    <div class="container">
+      <h1>Welcome to Squire</h1>
+        <p class="lead">Whatever you want, Whenever you want</p>
+        <div>&nbsp;</div>
+        <a href="http://www.usesquire.com" class="btn btn-default btn-lg">Get Started</a>
+    </div>
+  </div>
+
+  <hr>
+
+  <div id="sec1" class="blurb">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7">
+          <h1>Three ways to connect.</h1>
+          <p class="lead">You can call, text, or use our online form to submit your job to our finest Squires.</p>
+        </div>
+        <div class="col-md-5">
+          <h1 class="pull-right"><i class="fa fa-phone fa-2x"></i> <i class="fa fa-mobile fa-2x"></i> <i class="icon-laptop icon-3x"></i></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="featurette" id="sec2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h1>The Squire Process</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 col-md-offset-1 text-center">
+          <div class="featurette-item">
+            <i class="fa fa-paper-plane"></i>
+            <h4>Submit your Requst</h4>
+            <p>Whatever problem you have, or job you need done.</p>
+          </div>
+        </div>
+        <div class="col-md-2 text-center">
+          <div class="featurette-item">
+            <i class="fa fa-refresh fa-spin"></i>
+            <h4>Receive Confirmation</h4>
+            <p>A Squire has accepted your job and is working tirelessly to complete it.</p>
+          </div>
+        </div>
+        <div class="col-md-2 text-center">
+          <div class="featurette-item">
+            <i class="fa fa-keyboard-o"></i>
+            <h4>Constant Communication</h4>
+            <p>Your Squire will call or text you with any questions they might have, making sure your request gets done right.</p>
+          </div>
+        </div>
+        <div class="col-md-2 text-center">
+          <div class="featurette-item">
+            <i class="fa fa-diamond"></i>
+            <h4>Receive Squire's Proposal</h4>
+            <p>The Squire will prepare documents and a description of exactly how they're going to complete your request, you can receive proposals over text, email, or phonecall</p>
+          </div>
+        </div>
+        <div class="col-md-2 text-center">
+          <div class="featurette-item">
+            <i class="fa fa-thumbs-o-up"></i>
+            <h4>Accept Proposal or Request a Revision</h4>
+            <p>Everything look good? Accept the proposal and pay yuor request. Don't worry, we'll hold the payment until the Squire has proven they've completed the request just as you want it.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" id="sec3">
+    <div class="vert">
+      <div class="col-md-12 text-center"><h2>Just a sample of everything Squire can do for you.</h2></div>
+      <div class="col-md-12 text-center">&nbsp;</div>
+      <div class="col-md-8 col-md-offset-2 text-center">
+        <div class="row hidden-xs">
+         <div class="col-sm-2"><%= image_tag("presents.jpg", class:"img-circle grayscale") %><h4>Online Purhases</h4></div>
+         <div class="col-sm-2"><%= image_tag("pizza.jpeg", class:"img-circle grayscale") %><h4>Pizza Delivery</h4></div>
+         <div class="col-sm-2"><%= image_tag("maid.jpg", class:"img-circle grayscale") %><h4>Maid Service</h4></div>
+         <div class="col-sm-2"><%= image_tag("handyman.png", class:"img-circle grayscale") %><h4>Handyman Service</h4></div>
+         <div class="col-sm-2"><%= image_tag("groceries.jpg", class:"img-circle grayscale") %><h4>Grocery Delivery</h4></div>
+         <div class="col-sm-2"><%= image_tag("dogwalker.jpg", class:"img-circle grayscale") %><h4>Dog Walking</h4></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="blurb" id="sec4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h1>How to become a Squire</h1>
+          <ul>
+            <li>Complete an conprehensive application process</li>
+            <li>Have a one-on-one interview with a Squire employee</li>
+            <li>Complete training on several big e-commerce platforms that all squires should be able to use</li>
+            <li>Sign up for a Stripe account to receive payments</li>
+            <li>Be a humble, upstanding Squire and live up to the name!</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="featurette" id="sec5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-5">
+          <h1><i class="icon-money icon-3x"></i></h1>
+        </div>
+        <div class="col-md-7">
+          <h1 class="pull-right">Being a Squire Pays</h1>
+          <p class="lead pull-right">The Squire makes 5% of every request completed.
+            If a squire can complete 10 requests per hour and each request has the
+            average completion vaue of 50$ (which is fairly conservative
+            considering the average cost of a trip to the grocery store can cost
+            around $100), then that squire will be making approxiamately $25 an hour.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="blurb bright" id="sec6">
+    <div class="container">
+      <h1>Launching Summer 2015</h1>
+      <p class="lead">Check back later for more updates!</p>
+    </div>
+  </div>
+
+  <div class="blurb" id="sec7">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3 text-center">
+          <h3>Contact us to learn more</h3>
+          <p class="lead">Email: info@usesquire.com</p>
+          <p class="lead">Address: 986 5th Ave. W., Suite C</p>
+          <p class="lead">West Fargo ND, 58078</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3 text-center">
+          <ul class="list-inline">
+            <li><i class="icon-facebook icon-2x"></i></li>
+            <li><i class="icon-twitter icon-2x"></i></li>
+            <li><i class="icon-google-plus icon-2x"></i></li>
+            <li><i class="icon-pinterest icon-2x"></i></li>
+          </ul>
+          <hr>
+          <p>Squire LLC., 2015</p>
+        </div>
+      </div>
+    </div>
+  </footer>
 
 <% end %>

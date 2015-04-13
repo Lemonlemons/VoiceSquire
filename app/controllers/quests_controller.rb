@@ -133,6 +133,36 @@ class QuestsController < ApplicationController
       redirect_to edit_quest_path(@quest)
   end
 
+  def flagquest
+    @quest = Quest.find(params[:id])
+    @user = User.where(id: @quest.squire_id).first
+    @user.numberofquestsflagged = @user.numberofquestsflagged + 1
+    @user.activequests = @user.activequests - 1
+    @quest.timesflagged = @quest.timesflagged + 1
+    @quest.squire_id = nil
+    @quest.is_assigned = false
+    @quest.title = nil
+    @quest.description = nil
+    @quest.picture1 = nil
+    @quest.picture2 = nil
+    @quest.picture3 = nil
+    @quest.save && @user.save
+    if @quest.timesflagged > 2
+      @quest.squire_id = 1
+      @duke = Duke.where(id: @quest.duke_id).first
+      @duke.activequest_id = nil
+      @quest.duke_id = nil
+      ProposalMailer.warning_email(@quest).deliver_later
+      if @quest.save && @duke.save
+        redirect_to quests_path
+      else
+        redirect_to quests_path, notice: "There was a problem"
+      end
+    else
+      redirect_to quests_path
+    end
+  end
+
   def submitproof
     @quest = Quest.find(params[:id])
     @user = User.where(id: @quest.squire_id).first

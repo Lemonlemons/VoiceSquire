@@ -13,7 +13,7 @@ Rails.application.configure do
   :address              => "smtp.office365.com",
   :port                 => '587',
   :domain               => 'usesquire.com',
-  :user_name            => 'confirm@usesquire.com',
+  :user_name            => 'info@usesquire.com',
   :password             => 'Megamoe7!',
   :authentication       => :login,
   :enable_starttls_auto => true  }

@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "confirm@usesquire.com"
+  default from: "info@usesquire.com"
   layout 'mailer'
 end
