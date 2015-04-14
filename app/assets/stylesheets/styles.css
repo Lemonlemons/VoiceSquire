@@ -39,6 +39,22 @@ img.grayscale {
   background-color:#9f2a89;
 }
 
+.row .btn-primary {
+  background-color:#700f5e;
+  margin-top:3%;
+}
+.row .btn-primary:hover {
+  background-color:#9f2a89;
+}
+
+.well-sm {
+  margin-right:5%;
+}
+
+#moveit {
+  margin-left:5%;
+}
+
 .icon-bar {
    background-color:#fff;
 }
