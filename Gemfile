@@ -37,10 +37,6 @@ gem 'carrierwave'
 
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
 
-gem 'bootstrap-sass', '~> 3.2.0'
-
-gem 'autoprefixer-rails'
-
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
