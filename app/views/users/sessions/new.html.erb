@@ -1,19 +1,30 @@
+<nav class="navbar navbar-default">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header page-scroll">
+    <%= image_tag("3-slim.png", :width => 150, class:"imager2") %>
+  </div>
+</nav>
 <div class="container">
-  <h2>Log in</h2>
-
-  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-    <div><%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, class:"form-control", id:"usr" %></div>
-
-    <div><%= f.label :password %><br />
-      <%= f.password_field :password, autocomplete: "off", class:"form-control", id:"pwd" %></div>
-
-    <% if devise_mapping.rememberable? -%>
-      <div><%= f.check_box :remember_me %> <%= f.label :remember_me %></div>
-    <% end -%>
-
-    <div><%= f.submit "Log in", class:"btn btn-primary" %></div>
-  <% end %>
-
-  <%= render "users/shared/links" %>
+  <div class="col-md-6">
+    <div class="row">
+    <h2>Log in</h2>
+    </div>
+    <br />
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <div class="row"><%= f.label :email %><br />
+      <%= f.email_field :email, autofocus: true, class:"form-control", id:"usr" %></div>
+      <br />
+      <div class="row"><%= f.label :password %><br />
+        <%= f.password_field :password, autocomplete: "off", class:"form-control", id:"pwd" %></div>
+        <br />
+      <% if devise_mapping.rememberable? -%>
+        <div class="row"><%= f.check_box :remember_me %> <%= f.label :remember_me %></div>
+      <% end %>
+      <div class="row"><%= f.submit "Log in", class:"btn btn-primary" %></div>
+      <br />
+    <% end %>
+    <div class="row">
+    <%= render "users/shared/links" %>
+    </div>
+  </div>
 </div>

@@ -14,6 +14,11 @@ Rails.application.routes.draw do
       get 'paycharge'
       get 'paybillreturn'
       get 'flagquest'
+      get 'findquest'
+      get 'activeswitch'
+      get 'getmyquest'
+      get 'moretexts'
+      get 'gettextquest'
     end
   end
 
@@ -21,12 +26,21 @@ Rails.application.routes.draw do
   resources :messages
   resources :reviews
   resources :notes
-  resources :users
 
   post 'twilio/voice' => 'twilio#voice'
   post 'twilio/record' => "twilio#record"
   post 'twilio/message' => "twilio#message"
   post 'twilio/connect_customer' => 'twilio#connect_customer'
+  post 'twilio/squire_queue' => 'twilio#squire_queue'
+  post 'twilio/duke_queue' => 'twilio#duke_queue'
+  post 'twilio/squire_hungup' => 'twilio#squire_hungup'
+  post 'twilio/duke_hungup' => 'twilio#duke_hungup'
+  post 'twilio/squire_connect' => 'twilio#squire_connect'
+  post 'twilio/duke_connect' => 'twilio#duke_connect'
+  post 'twilio/squire_record' => 'twilio#squire_record'
+  post 'twilio/duke_record' => 'twilio#duke_record'
+  post 'twilio/squirevoice' => 'twilio#squirevoice'
+  post 'twilio/squiremessage' => 'twilio#squiremessage'
 
   root 'quests#index'
   # The priority is based upon order of creation: first created -> highest priority.

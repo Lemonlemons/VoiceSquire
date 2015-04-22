@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   validates :state, :presence => {message:"is missing an input"}
   validates :zipcode, :presence => {message:"is missing an input"}
   validates :birthday, :presence => {message:"is missing an input"}
-  validates :phonenumber, :length => {maximum:10, minimum:10, message:"must be 10 digits"}
+  validates :phonenumber, :length => {maximum:12, minimum:10, message:"must be 10 digits"}
 
   # Include default devise modules. Others available are:
   # :lockable, :timeoutable

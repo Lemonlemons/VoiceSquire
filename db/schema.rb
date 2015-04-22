@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150410225247) do
+ActiveRecord::Schema.define(version: 20150421214348) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,10 +29,10 @@ ActiveRecord::Schema.define(version: 20150410225247) do
     t.string   "lastname"
     t.string   "email"
     t.string   "mailingaddress"
-    t.string   "city"
-    t.string   "state"
-    t.string   "country"
-    t.string   "zipcode"
+    t.string   "physicalcity"
+    t.string   "physicalstate"
+    t.string   "physicalcountry"
+    t.string   "physicalzipcode"
     t.integer  "preferredproposalmethod"
     t.datetime "birthday"
     t.boolean  "is_landline",                     default: false
@@ -48,6 +48,14 @@ ActiveRecord::Schema.define(version: 20150410225247) do
     t.boolean  "registered",                      default: false
     t.integer  "activequest_id"
     t.string   "customertoken"
+    t.string   "callsid"
+    t.boolean  "is_active",                       default: false
+    t.string   "mailingcity"
+    t.string   "mailingstate"
+    t.string   "mailingzipcode"
+    t.string   "mailingcountry"
+    t.string   "password"
+    t.string   "password_confirmation"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -177,6 +185,10 @@ ActiveRecord::Schema.define(version: 20150410225247) do
     t.boolean  "interviewcomplete",           default: false
     t.boolean  "registrationcomplete",        default: false
     t.boolean  "is_admin",                    default: false
+    t.boolean  "is_active",                   default: false
+    t.string   "callsid"
+    t.boolean  "is_text_active",              default: false
+    t.string   "profilepic"
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree

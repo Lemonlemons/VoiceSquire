@@ -32,11 +32,14 @@ img.grayscale {
     -webkit-filter: grayscale(100%); /* Chrome 19+, Safari 6+, Safari 6+ iOS */
 }
 
-.navbar .btn-primary {
+.btn-primary {
   background-color:#700f5e;
 }
-.navbar .btn-primary:hover {
+.btn-primary:hover {
   background-color:#9f2a89;
+}
+.btn-primary:active {
+  background-color:#700f5e;
 }
 
 .row .btn-primary {
@@ -46,6 +49,9 @@ img.grayscale {
 .row .btn-primary:hover {
   background-color:#9f2a89;
 }
+#menu1:active {
+  background-color:#700f5e;
+}
 
 .well-sm {
   margin-right:5%;
@@ -53,6 +59,10 @@ img.grayscale {
 
 #moveit {
   margin-left:5%;
+}
+
+#mailing {
+  display: none;
 }
 
 .icon-bar {
@@ -142,7 +152,7 @@ img.grayscale {
 
 .header h1 {
   font-size:80px;
-  -webkit-text-stroke: 1px rgba(f,f,f,0.1);
+  -webkit-text-stroke: 1px rgba(255,255,255,0.1);
   color:#431a6d;
   color:#fff;
   margin-left:-5px;

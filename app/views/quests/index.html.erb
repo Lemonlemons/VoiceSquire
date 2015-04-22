@@ -2,7 +2,7 @@
   <nav class="navbar navbar-default">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header page-scroll">
-      <%= image_tag("3-slim.png", :width => 150, class:"imager2") %>
+      <%= link_to image_tag("3-slim.png", :width => 150, class:"imager2"), quests_path %>
     </div>
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -20,6 +20,7 @@
   </nav>
   <div class='row'>
     <div class='col-md-9'>
+      <div class='container'>
       <h1>Welcome Back Squire</h1>
 
       <% if current_user.stripecomplete == false %>
@@ -59,30 +60,37 @@
         <h3>Registration: <i class="fa fa-check"></i></h3>
         <h3>Sign-Up for Stripe: <i class="fa fa-check"></i></h3>
         <h3>Complete Training Videos: <i class="fa fa-check"></i></h3>
+      </div>
     </div>
     <div class='col-md-3'>
       <div class='well well-sm'>
         <p>Logged in as <strong><%= current_user.email %></strong></br>
-        There are <%= @quests2.count + @dukes.where(email: nil).count %> available quests</p>
-        <%= button_to "Get a Quest", getmeaquest_quest_path(current_user), :method => "get", class: 'btn btn-default' %>
+        You have <%= @quests.count %> quests in waiting</p>
+        <%= link_to "Get Quest", getmyquest_quest_path(current_user), :method => "get", class: 'btn btn-primary btn-block' %>
+        <% if current_user.is_text_active == true %>
+          <%= link_to "Disable Text Quests", activeswitch_quest_path(current_user), :method => "get", class: 'btn btn-warning btn-block' %>
+        <% else %>
+          <p>You need to have "Text Quests" enabled to accept quests via text</p>
+          <%= link_to "Enable Text Quests", activeswitch_quest_path(current_user), :method => "get", class: 'btn btn-success btn-block' %>
+        <% end %>
       </div>
       <div class='well well-sm'>
         <h2>Ongoing Quests</h2>
-        <% @dukes.each do |duke| %>
-          <% if (duke.squire_id == current_user.id) && (duke.registered == false) %>
-            <p><%= link_to duke.phonenumber, edit_duke_path(duke) %></p>
-            <hr />
-          <% end %>
-        <% end %>
-        <% @quests.each do |quest| %>
+        <% @quests2.each do |quest| %>
           <% if quest.is_proofsubmitted == false %>
-            <% if quest.title != nil %>
-              <h3><%= quest.title %></h3>
-            <% end %>
             <% if quest.audiolink.nil? %>
-              <h4><%= link_to quest.textlink, edit_quest_path(quest) %></h4>
+              <% if quest.title == nil %>
+                <h3><%= link_to "Text Quest "+quest.id.to_s, edit_quest_path(quest) %></h3>
+                <h3><%= link_to quest.textlink, edit_quest_path(quest) %></h3>
+              <% else %>
+                <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
+              <% end %>
             <% else %>
-              <%= link_to "Audio Quest", edit_quest_path(quest) %>
+              <% if quest.title == nil %>
+                <h3><%= link_to "Audio Quest "+quest.id.to_s, edit_quest_path(quest) %></h3>
+              <% else %>
+                <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
+              <% end %>
               <audio controls>
                 <source src="<%= quest.audiolink %>" type="audio/wav">
                 Your browser does not support the audio element.
@@ -94,12 +102,21 @@
       </div>
       <div class="well well-sm">
         <h2>Quests awaiting proof confirmation</h2>
-        <% @quests.each do |quest| %>
+        <% @quests2.each do |quest| %>
           <% if quest.is_proofsubmitted == true %>
-            <h3><%= quest.title %></h3>
             <% if quest.audiolink.nil? %>
-              <h4><%= link_to quest.textlink, edit_quest_path(quest) %></h4>
+              <% if quest.title == nil %>
+                <h3><%= link_to "Text Quest "+quest.id.to_s, edit_quest_path(quest) %></h3>
+                <h3><%= link_to quest.textlink, edit_quest_path(quest) %></h3>
+              <% else %>
+                <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
+              <% end %>
             <% else %>
+              <% if quest.title == nil %>
+                <h3><%= link_to "Audio Quest "+quest.id.to_s, edit_quest_path(quest) %></h3>
+              <% else %>
+                <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
+              <% end %>
               <audio controls>
                 <source src="<%= quest.audiolink %>" type="audio/wav">
                 Your browser does not support the audio element.
@@ -120,11 +137,14 @@
       </div>
     </div>
   </div>
+
+  <footer>
+  </footer>
 <% else %>
   <!-- Navigation -->
   <nav class="navbar navbar-default">
       <div class="navbar-header page-scroll">
-        <%= image_tag("3-slim.png", :width => 150, class:"imager2") %>
+        <%= link_to image_tag("3-slim.png", :width => 150, class:"imager2"), quests_path %>
       </div>
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -148,13 +168,13 @@
                   <a href="#sec7">Contact Us</a>
               </li>
               <li class="page-scroll">
-                <%= button_to "Sign up", new_user_registration_path, class: 'btn btn-default btn-margin-left', id:"lemon" %>
+                <%= button_to "Sign up", new_user_registration_path, class: 'btn btn-default btn-margin-left', id:"lemon", method:"get" %>
               </li>
               <li class="page-scroll">
                 &nbsp;
               </li>
               <li class="page-scroll">
-                <%= button_to "Sign in", new_user_session_path, class: 'btn btn-primary btn-margin-left' %>
+                <%= button_to "Sign in", new_user_session_path, class: 'btn btn-primary btn-margin-left', method:"get" %>
               </li>
           </ul>
       </div>
@@ -164,7 +184,7 @@
       <h1>Welcome to Squire</h1>
         <p class="lead">Whatever you want, Whenever you want</p>
         <div>&nbsp;</div>
-        <a href="http://www.usesquire.com" class="btn btn-default btn-lg">Get Started</a>
+        <%= link_to "Get Started", new_duke_path, class:"btn btn-default btn-lg" %>
     </div>
   </div>
 

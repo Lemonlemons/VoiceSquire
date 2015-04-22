@@ -1,46 +1,98 @@
-<h2>Sign up</h2>
+<nav class="navbar navbar-default">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header page-scroll">
+    <%= image_tag("3-slim.png", :width => 150, class:"imager2") %>
+  </div>
+</nav>
+<div class='container'>
+  <div class='col-md-8'>
+    <h2>Sign up to be a Squire</h2>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= devise_error_messages! %>
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      <%= devise_error_messages! %>
 
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email, autofocus: true %></div>
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :email %><br />
+          <%= f.email_field :email, autofocus: true, class:"form-control" %>
+        </div>
+      </div>
 
-  <div><%= f.label :birthday, "Your Birthday:" %><br />
-  <%= f.date_select :birthday, options={start_year: 1933} %></div>
+      <div class='row'>
+        <div class='col-md-6'>
+          <br />
+        <%= f.label :firstname, "Firstname:" %><br />
+        <%= f.text_field :firstname, class:"form-control" %>
+        </div>
+        <div class='col-md-6'>
+          <br />
+        <%= f.label :lastname, "Lastname:" %><br />
+        <%= f.text_field :lastname, class:"form-control" %>
+        </div>
+      </div>
 
-  <div><%= f.label :firstname, "Firstname:" %><br />
-  <%= f.text_field :firstname %></div>
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :birthday, "Your Birthday:" %><br />
+          <%= f.date_select :birthday, options={start_year: 1933} %>
+        </div>
+      </div>
 
-  <div><%= f.label :lastname, "Lastname:" %><br />
-  <%= f.text_field :lastname %></div>
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :is_female, "Are you male or female?" %>
+          <%= f.radio_button :is_female, false %> <%= f.label :is_female, "Male" %>
+          <%= f.radio_button :is_female, true %> <%= f.label :is_female, "Female" %>
+        </div>
+      </div>
 
-  <p>Are you male or female?</p>
-  <div><%= f.radio_button :is_female, false %> <%= f.label :is_female, "Male" %>
-       <%= f.radio_button :is_female, true %> <%= f.label :is_female, "Female" %> </div>
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :phonenumber, "Phonenumber:" %><br />
+          <%= f.text_field :phonenumber, class:"form-control" %>
+        </div>
+      </div>
 
-  <div><%= f.label :phonenumber, "Phonenumber:" %><br />
-  <%= f.text_field :phonenumber %></div>
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :address, "Address:" %><br />
+          <%= f.text_field :address, class:"form-control" %>
+        </div>
+      </div>
 
-  <div><%= f.label :address, "Address:" %><br />
-  <%= f.text_field :address %></div>
+      <div class='row'>
+        <div class='col-md-6'>
+          <br />
+        <%= f.label :city, "City:" %><br />
+        <%= f.text_field :city, class:"form-control" %>
+        </div>
 
-  <div><%= f.label :city, "City:" %><br />
-  <%= f.text_field :city %></div>
+        <div class='col-md-1'>
+          <br />
+        <%= f.label :state, "State:" %><br />
+        <%= f.collection_select(:state, State.all, :name, :name, class:"form-control") %>
+        </div>
 
-  <div><%= f.label :state, "State:" %><br />
-  <%= f.collection_select(:state, State.all, :name, :name) %></div>
+        <div class='col-md-5'>
+          <br />
+        <%= f.label :zipcode, "Zipcode:" %><br />
+        <%= f.text_field :zipcode, class:"form-control" %>
+        </div>
+      </div>
 
-  <div><%= f.label :zipcode, "Zipcode:" %><br />
-  <%= f.text_field :zipcode %></div>
+      <div><%= f.label :password, "Your Password" %> <% if @validatable %><i>(<%= @minimum_password_length %> characters minimum)</i><% end %><br />
+        <%= f.password_field :password, autocomplete: "off", class:"form-control", id:"pwd" %></div>
 
-  <div><%= f.label :password, "Your Password" %> <% if @validatable %><i>(<%= @minimum_password_length %> characters minimum)</i><% end %><br />
-    <%= f.password_field :password, autocomplete: "off" %></div>
+      <div><%= f.label :password_confirmation, "Confirm Your Password" %><br />
+        <%= f.password_field :password_confirmation, autocomplete: "off", class:"form-control", id:"pwd" %></div>
 
-  <div><%= f.label :password_confirmation, "Confirm Your Password" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "off" %></div>
-
-  <div><%= f.submit "Sign up" %></div>
-<% end %>
-
+      <div><%= f.submit "Sign up" %></div>
+    <% end %>
+  </div>
+</div>
 <%= render "users/shared/links" %>

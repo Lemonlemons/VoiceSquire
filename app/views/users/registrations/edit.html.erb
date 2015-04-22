@@ -1,57 +1,139 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<% if user_signed_in? %>
+  <nav class="navbar navbar-default">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <%= image_tag("3-slim.png", :width => 150, class:"imager2") %>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <div class="nav navbar-nav navbar-right">
+        <div class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Options <span class="caret"></span></button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+            <li role="presentation", id:"options"><%= link_to 'Edit Profile',edit_user_registration_path, id:"options" %></li>
+            <li role="presentation" class="divider", id:"options"></li>
+            <li role="presentation", id:"options"><%= link_to "Sign out", destroy_user_session_path, method: :delete, id:"options" %></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class='container'>
+    <div class='col-md-8'>
+      <h2>Edit <%= resource_name.to_s.humanize %> Information</h2>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= devise_error_messages! %>
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }, class:"form-vertical") do |f| %>
+        <%= devise_error_messages! %>
 
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email, autofocus: true %></div>
+        <div class='row'>
+          <div class='col-md-12'>
+            <br />
+            <%= f.label :email %><br />
+            <%= f.email_field :email, autofocus: true, class:"form-control" %>
+          </div>
+        </div>
 
-  <div><%= f.label :birthday, "Your Birthday:" %><br />
-  <%= f.date_select :birthday, options={start_year: 1933} %></div>
+        <div class='row'>
+          <div class='col-md-6'>
+            <br />
+          <%= f.label :firstname, "Firstname:" %><br />
+          <%= f.text_field :firstname, class:"form-control" %>
+          </div>
+          <div class='col-md-6'>
+            <br />
+          <%= f.label :lastname, "Lastname:" %><br />
+          <%= f.text_field :lastname, class:"form-control" %>
+          </div>
+        </div>
 
-  <div><%= f.label :firstname, "Firstname:" %><br />
-  <%= f.text_field :firstname %></div>
+        <div class='row'>
+          <div class='col-md-12'>
+            <br />
+            <%= f.label :birthday, "Your Birthday:" %><br />
+            <%= f.date_select :birthday, options={start_year: 1933} %>
+          </div>
+        </div>
 
-  <div><%= f.label :lastname, "Lastname:" %><br />
-  <%= f.text_field :lastname %></div>
+        <div class='row'>
+          <div class='col-md-12'>
+            <br />
+            <%= f.label :is_female, "Are you male or female?" %>
+            <%= f.radio_button :is_female, false %> <%= f.label :is_female, "Male" %>
+            <%= f.radio_button :is_female, true %> <%= f.label :is_female, "Female" %>
+          </div>
+        </div>
 
-  <p>Are you male or female?</p>
-  <div><%= f.radio_button :is_female, false %> <%= f.label :is_female, "Male" %>
-       <%= f.radio_button :is_female, true %> <%= f.label :is_female, "Female" %> </div>
+        <div>
+          <br />
+        <%= f.label :phonenumber, "Phonenumber:" %><br />
+        <%= f.text_field :phonenumber, class:"form-control" %>
+        </div>
 
-  <div><%= f.label :phonenumber, "Phonenumber:" %><br />
-  <%= f.text_field :phonenumber %></div>
+        <div>
+          <br />
+        <%= f.label :address, "Address:" %><br />
+        <%= f.text_field :address, class:"form-control" %>
+        </div>
 
-  <div><%= f.label :address, "Address:" %><br />
-  <%= f.text_field :address %></div>
+        <div class='row'>
+          <div class='col-md-6'>
+            <br />
+          <%= f.label :city, "City:" %><br />
+          <%= f.text_field :city, class:"form-control" %>
+          </div>
 
-  <div><%= f.label :city, "City:" %><br />
-  <%= f.text_field :city %></div>
+          <div class='col-md-1'>
+            <br />
+          <%= f.label :state, "State:" %><br />
+          <%= f.collection_select(:state, State.all, :name, :name, class:"form-control") %>
+          </div>
 
-  <div><%= f.label :state, "State:" %><br />
-  <%= f.collection_select(:state, State.all, :name, :name) %></div>
+          <div class='col-md-5'>
+            <br />
+          <%= f.label :zipcode, "Zipcode:" %><br />
+          <%= f.text_field :zipcode, class:"form-control" %>
+          </div>
+        </div>
 
-  <div><%= f.label :zipcode, "Zipcode:" %><br />
-  <%= f.text_field :zipcode %></div>
+        <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+          <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+        <% end %>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-  <% end %>
+        <div>
+          <br />
+          <%= f.label :password, "New Password" %> <i>(leave blank if you don't want to change it)</i><br />
+          <%= f.password_field :password, autocomplete: "off", class:"form-control" %>
+        </div>
 
-  <div><%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-    <%= f.password_field :password, autocomplete: "off" %></div>
+        <div>
+          <br />
+          <%= f.label :password_confirmation, "New Password confirmation" %><br />
+          <%= f.password_field :password_confirmation, autocomplete: "off", class:"form-control" %>
+        </div>
 
-  <div><%= f.label :password_confirmation, "New Password confirmation" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "off" %></div>
+        <div>
+          <br />
+          <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
+          <%= f.password_field :current_password, autocomplete: "off", class:"form-control" %>
+        </div>
 
-  <div><%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
-    <%= f.password_field :current_password, autocomplete: "off" %></div>
+        <div class='row'>
+          <div class='col-md-12'>
+            <%= f.submit "Update", class:'btn btn-primary' %>
+          </div>
+        </div>
+      <% end %>
 
-  <div><%= f.submit "Update" %></div>
+      <h3>Cancel my account</h3>
+
+      <p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete, class:"btn btn-warning" %></p>
+
+      <%= button_to "Back", :back, :method => "get", class:'btn btn-default' %>
+    </div>
+  </div>
+
+  <footer>
+  </footer>
+<% else %>
+  <%= redirect_to quests_path %>
 <% end %>
-
-<h3>Cancel my account</h3>
-
-<p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete %></p>
-
-<%= link_to "Back", :back %>

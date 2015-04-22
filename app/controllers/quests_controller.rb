@@ -1,10 +1,9 @@
 class QuestsController < ApplicationController
   def index
     if current_user != nil
-      @quests = Quest.where("squire_id = ? AND is_completed = ?", current_user.id , false)
+      @quests = Quest.where("squire_id = ? AND is_assigned = ? AND is_completed = ?", current_user.id, false, false)
+      @quests2 = Quest.where("squire_id = ? AND is_assigned = ? AND is_completed = ?", current_user.id, true, false)
     end
-    @quests2 = Quest.where(squire_id: nil)
-    @dukes = Duke.all
   end
 
   def show
@@ -29,17 +28,22 @@ class QuestsController < ApplicationController
   end
 
   def edit
-    @quest = Quest.find(params[:id])
-    @quests = Quest.where("squire_id = ? AND is_completed = ?", current_user.id , false)
-    @quests2 = Quest.where(squire_id: nil)
-    @notes = Note.where(duke_id: @quest.duke_id)
-    @dukes = Duke.all
-    @duke = Duke.where(id: @quest.duke_id).first
-    @messages = Message.where(quest_id: @quest.id)
-    @message = Message.new
-    capability = Twilio::Util::Capability.new Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token
-    capability.allow_client_outgoing Rails.application.secrets.twilio_twiml_app_sid
-    @token = capability.generate()
+    if current_user != nil
+      @quest = Quest.find(params[:id])
+      @quests = Quest.where("squire_id = ? AND is_assigned = ? AND is_completed = ?", current_user.id, false, false)
+      @quests2 = Quest.where("squire_id = ? AND is_assigned = ? AND is_completed = ?", current_user.id, true, false)
+      capability = Twilio::Util::Capability.new Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token
+      capability.allow_client_outgoing Rails.application.secrets.twilio_twiml_app_sid_basic_calling
+      capability.allow_client_incoming current_user.id.to_s
+      @token = capability.generate
+      @notes = Note.where(duke_id: @quest.duke_id)
+      @note = Note.new
+      @duke = Duke.where(id: @quest.duke_id).first
+      @messages = Message.where(quest_id: @quest.id)
+      @message = Message.new
+    else
+      redirect_to quests_path, notice: "Please log in"
+    end
   end
 
   def update
@@ -74,6 +78,41 @@ class QuestsController < ApplicationController
     @quest = Quest.find(params[:id])
     @quest.destroy
     redirect_to quests_path, notice:"Your quest has been deleted"
+  end
+
+  def moretexts
+    @quests = Quest.where("squire_id IS ? AND typeofquest = ?", nil, 2)
+  end
+
+  def activeswitch
+    @user = current_user
+    if @user.activequests < 3
+      if @user.is_text_active == false
+        @quests = Quest.where("squire_id IS ? AND typeofquest = ?", nil, 2)
+        if @quests.count > 0
+          redirect_to moretexts_quest_path
+        else
+          @user.is_text_active = true
+          @user.save
+          redirect_to quests_path, notice:"Alright you're active. Be expecting Texts"
+        end
+      else
+        @user.is_text_active = false
+        @user.save
+        redirect_to quests_path, notice:"You've Deactivated."
+      end
+    else
+      redirect_to quests_path, notice:"You can only work on 3 quests at a time"
+    end
+  end
+
+  def gettextquest
+    @user = current_user
+    @quest = Quest.where("squire_id IS ? AND typeofquest = ?", nil, 2).first
+    @quest.squire_id = @user.id
+    @quest.save
+    @user.activequests = @user.activequests + 1
+    @user.save
   end
 
   def paybill
@@ -211,9 +250,23 @@ class QuestsController < ApplicationController
     redirect_to quests_path, notice:"Thank you for completing training"
   end
 
+  def getmyquest
+    @user = current_user
+    if @quest = Quest.where("squire_id = ? AND is_assigned = ?", @user.id, false).first
+      @quest.is_assigned = true
+      if @quest.save
+        redirect_to edit_quest_path(@quest), notice: "You hath taken on the Quest"
+      else
+        redirect_to quests_path, notice:"There was a problem mmmm"
+      end
+    else
+      redirect_to quests_path, notice: "Sorry, no available Quests!"
+    end
+  end
+
   def getmeaquest
     @user = User.find(params[:id])
-    if (@user.activequests < 4)
+    if (@user.activequests < 3)
       if @duke = Duke.where(squire_id: nil).first
         @duke.squire_id = @user.id
         @user.activequests = @user.activequests + 1
@@ -236,7 +289,7 @@ class QuestsController < ApplicationController
              redirect_to quests_path, notice:"There was a problem mmmm"
            end
         else
-          redirect_to quests_path, notice:"No available quests"
+          redirect_to findquest_quest_path(@user), notice:"Try Again!"
         end
       end
     else

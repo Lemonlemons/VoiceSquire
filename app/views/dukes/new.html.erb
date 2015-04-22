@@ -1,0 +1,169 @@
+<nav class="navbar navbar-default">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header page-scroll">
+    <%= link_to image_tag("3-slim.png", :width => 150, class:"imager2"), quests_path %>
+  </div>
+</nav>
+<div class='container'>
+  <div class='col-md-8'>
+    <h2>Sign up to use Squire!</h2>
+
+    <%= form_for @duke do |f| %>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :phonenumber, "Your Unique Phonenumber:" %><br />
+          <%= f.text_field :phonenumber, class:"form-control" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :is_landline, "Is this phonenumber a landline?" %>
+          <%= f.radio_button :is_landline, false %> <%= f.label :is_landline, "Cell Phone" %>
+          <%= f.radio_button :is_landline, true %> <%= f.label :is_landline, "Landline" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-6'>
+          <br />
+        <%= f.label :firstname, "Firstname:" %><br />
+        <%= f.text_field :firstname, class:"form-control" %>
+        </div>
+        <div class='col-md-6'>
+          <br />
+        <%= f.label :lastname, "Lastname:" %><br />
+        <%= f.text_field :lastname, class:"form-control" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :birthday, "Your Birthday:" %><br />
+          <%= f.date_select :birthday, options={start_year: 1933} %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :is_female, "Are you male or female?" %>
+          <%= f.radio_button :is_female, false %> <%= f.label :is_female, "Male" %>
+          <%= f.radio_button :is_female, true %> <%= f.label :is_female, "Female" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :email %><br />
+          <%= f.email_field :email, autofocus: true, class:"form-control" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :physicaladdress, "Physical Address:" %><br />
+          <%= f.text_field :physicaladdress, class:"form-control" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-6'>
+          <br />
+        <%= f.label :physicalcity, "City:" %><br />
+        <%= f.text_field :physicalcity, class:"form-control" %>
+        </div>
+
+        <div class='col-md-1'>
+          <br />
+        <%= f.label :physicalstate, "State:" %><br />
+        <%= f.collection_select(:physicalstate, State.all, :name, :name, class:"form-control") %>
+        </div>
+
+        <div class='col-md-5'>
+          <br />
+        <%= f.label :physicalzipcode, "Zipcode:" %><br />
+        <%= f.text_field :physicalzipcode, class:"form-control" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :is_mailingsameasphysicaladdress, "Is your mailing address the same as your physical address?" %>
+          <%= f.radio_button :is_mailingsameasphysicaladdress, true, class:"switcher" %> <%= f.label :is_mailingsameasphysicaladdress, "Same" %>
+          <%= f.radio_button :is_mailingsameasphysicaladdress, false, class:"switcher" %> <%= f.label :is_mailingsameasphysicaladdress, "Different" %>
+        </div>
+      </div>
+
+      <div id="mailing">
+        <div class='row'>
+          <div class='col-md-12'>
+            <br />
+            <%= f.label :mailingaddress, "Mailing Address:" %><br />
+            <%= f.text_field :mailingaddress, class:"form-control" %>
+          </div>
+        </div>
+
+        <div class='row'>
+          <div class='col-md-6'>
+            <br />
+          <%= f.label :mailingcity, "City:" %><br />
+          <%= f.text_field :mailingcity, class:"form-control" %>
+          </div>
+
+          <div class='col-md-1'>
+            <br />
+          <%= f.label :mailingstate, "State:" %><br />
+          <%= f.collection_select(:mailingstate, State.all, :name, :name, class:"form-control") %>
+          </div>
+
+          <div class='col-md-5'>
+            <br />
+          <%= f.label :mailingzipcode, "Zipcode:" %><br />
+          <%= f.text_field :mailingzipcode, class:"form-control" %>
+          </div>
+        </div>
+      </div>
+
+      <br />
+      <div class='row'>
+        <div class='col-md-12'>
+          <%= f.label :password, "Your Password" %><br />
+          <%= f.password_field :password, autocomplete: "off", class:"form-control", id:"pwd" %>
+        </div>
+      </div>
+
+      <br />
+      <div class='row'>
+        <div class='col-md-12'>
+          <%= f.label :password_confirmation, "Confirm Your Password" %><br />
+          <%= f.password_field :password_confirmation, autocomplete: "off", class:"form-control", id:"pwd" %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class='col-md-12'>
+          <%= f.submit "Sign up to use Squire", class:"btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<footer>
+</footer>
+
+<script>
+  $(document).ready(function () {
+    $('.switcher').click(function () {
+      $("#mailing").toggle();
+    });
+  });
+</script>

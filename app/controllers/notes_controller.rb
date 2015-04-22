@@ -16,7 +16,7 @@ class NotesController < ApplicationController
     @note = Note.new(note_params)
 
     if @note.save
-      redirect_to quests_path, notice: "note was saved"
+      redirect_to edit_quest_path(@note.quest_id), notice: "note was added"
     else
       render "new"
     end
@@ -31,7 +31,7 @@ class NotesController < ApplicationController
     @note = Note.find(params[:id])
 
     if @note.update_attributes(note_params)
-      redirect_to edit_note_path(@note), notice: "Your note has been updated"
+      redirect_to edit_note_path(@note), notice: "Your note has been added"
     else
       redirect_to edit_note_path(@note), notice: "Something went wrong"
     end

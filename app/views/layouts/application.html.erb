@@ -11,6 +11,31 @@
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
+  <!-- jQuery -->
+  <script src="/assets/jquery.js"></script>
+  <!-- Bootstrap Core JavaScript -->
+  <script src='/assets/bootstrap.js'></script>
+  <script src="/assets/scripts.js"></script>
+  <%= favicon_link_tag 'favicon.ico' %>
+  <!-- <script type="text/javascript" src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+  <script type="text/javascript">
+    Twilio.Device.setup("<%= @token %>", {debug: true});
+    Twilio.Device.incoming(function (conn) {
+      $("#log").text("Incoming connection from " + conn.parameters.From);
+      $("#getter").show();
+      $('#getter').click(function () {
+        conn.accept().delay(3000);
+      });
+    });
+  </script>
+  <script>
+  $(document).ready(function () {
+    $('#getter').hide();
+  $('#clicker').click(function () {
+    $("#log").text("Hello");
+  });
+  });
+</script> -->
 </head>
 <body>
   <% if notice != nil %>
@@ -25,10 +50,5 @@
     </div>
   <% end %>
   <%= yield %>
-  <!-- jQuery -->
-  <script src="/assets/jquery.js"></script>
-  <!-- Bootstrap Core JavaScript -->
-  <script src='/assets/bootstrap.js'></script>
-  <script src="/assets/scripts.js"></script>
 </body>
 </html>

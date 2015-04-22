@@ -16,7 +16,7 @@ class DukesController < ApplicationController
     @duke = Duke.new(duke_params)
 
     if @duke.save
-      redirect_to quests_path, notice: "Duke was saved"
+      redirect_to quests_path, notice: "New Duke saved! Welcome to Squire!"
     else
       render "new"
     end
@@ -24,21 +24,14 @@ class DukesController < ApplicationController
 
   def edit
     @duke = Duke.find(params[:id])
-    @dukes = Duke.all
-    @quests = Quest.all
-    @quests2 = Quest.where(squire_id: nil)
-    capability = Twilio::Util::Capability.new Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token
-    capability.allow_client_outgoing Rails.application.secrets.twilio_twiml_app_sid
-    @token = capability.generate()
   end
 
   def update
     @duke = Duke.find(params[:id])
-    @user = User.where(id: @duke.squire_id).first
     if @duke.update_attributes(duke_params)
+      @duke.phonenumber = "+1" + @duke.phonenumber
       @duke.registered = true
-      @user.activequests = @user.activequests - 1
-      if @duke.save && @user.save
+      if @duke.save
         ProposalMailer.welcome_email(@duke).deliver_later
         redirect_to quests_path, notice: "this duke has been added to the program"
       else
@@ -56,9 +49,9 @@ class DukesController < ApplicationController
   end
 
   def duke_params
-    params.require(:duke).permit(:phonenumber, :firstname, :lastname, :email, :mailingaddress,
-    :city, :state, :country, :zipcode, :preferredproposalmethod, :birthday, :is_landline,
-    :is_mailingsameasphysicaladdress, :physicaladdress, :is_female, :rating, :numberofquests,
-    :numberofnotes, :registered)
+    params.require(:duke).permit(:phonenumber, :firstname, :lastname, :email, :physicaladdress,
+    :physicalcity, :physicalstate, :physicalcountry, :physicalzipcode, :preferredproposalmethod, :birthday, :is_landline,
+    :is_mailingsameasphysicaladdress, :mailingaddress, :mailingcity, :mailingstate, :mailingcountry, :mailingzipcode,
+    :is_female, :rating, :numberofquests, :numberofnotes, :registered, :password, :password_confirmation)
   end
 end

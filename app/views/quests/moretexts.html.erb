@@ -1,0 +1,9 @@
+<div class="header alt vert">
+  <div class="container">
+    <h1>There are <%= @quests.count %> text quests available</h1>
+      <p class="lead">Would you like to take one on?</p>
+      <div>&nbsp;</div>
+      <%= link_to "Get a text quest", gettextquest_quest_path(current_user), class:"btn btn-default btn-lg" %>
+      <%= link_to "No Thanks", quests_path, class:"btn btn-default btn-lg" %>
+  </div>
+</div>
