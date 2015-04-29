@@ -132,7 +132,18 @@
         </div>
       </div>
 
-      <br />
+
+      <div class="row">
+        <div class="col-md-12">
+          <br />
+          <%= f.label :preferredproposalmethod, "What is your preferred method of receiving proposals?" %><br />
+          <%= f.radio_button :preferredproposalmethod, 1 %> <%= f.label :preferredproposalmethod, "Email (Best Method)" %>
+          <%= f.radio_button :preferredproposalmethod, 2 %> <%= f.label :preferredproposalmethod, "Text" %>
+          <%= f.radio_button :preferredproposalmethod, 3 %> <%= f.label :preferredproposalmethod, "Phonecall" %>
+        </div>
+      </div>
+
+      <!-- <br />
       <div class='row'>
         <div class='col-md-12'>
           <%= f.label :password, "Your Password" %><br />
@@ -146,7 +157,7 @@
           <%= f.label :password_confirmation, "Confirm Your Password" %><br />
           <%= f.password_field :password_confirmation, autocomplete: "off", class:"form-control", id:"pwd" %>
         </div>
-      </div>
+      </div> -->
 
       <div class="row">
         <div class='col-md-12'>

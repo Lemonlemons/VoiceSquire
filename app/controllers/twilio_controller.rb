@@ -22,12 +22,14 @@ class TwilioController < ApplicationController
               # d.Client @user.id.to_s
               d.Queue "Squire Queue", url:"/twilio/duke_connect"
             end
+            r.Say "Hey there brah!"
           end
         else
           @duke.is_active = true
           @duke.save
           response = Twilio::TwiML::Response.new do |r|
             r.Enqueue "Duke Queue", waitUrl:"/twilio/duke_queue", action:"/twilio/duke_hungup"
+            r.Say "Hey there brah!"
           end
         end
       else
@@ -211,11 +213,12 @@ class TwilioController < ApplicationController
   end
 
   def message
-    messageBody = params['Body']
-    messageFrom = params['From']
+    messageBody = params[:Body]
+    messageFrom = params[:From]
     client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
     if @duke = Duke.where(phonenumber: messageFrom).first
       if @duke.activequest_id != nil
+        @quest = Quest.where(id: @duke.activequest_id).first
         textmessage = Message.new(duke_id: @duke.id, quest_id: @duke.activequest_id, is_text: true, sentby_duke: true, body: messageBody)
         textmessage.save
       else

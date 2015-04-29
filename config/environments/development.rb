@@ -9,6 +9,8 @@ Rails.application.configure do
   # Do not eager load code on boot.
   config.eager_load = false
 
+  config.action_controller.allow_forgery_protection = false
+
   OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
   # Show full error reports and disable caching.
@@ -24,7 +26,7 @@ Rails.application.configure do
   :port                 => 587,
   :domain               => 'gmail.com',
   :user_name            => 'moeandrew777@gmail.com',
-  :password             => 'Megamoe7',
+  :password             => 'Squire2015',
   :authentication       => 'plain',
   :enable_starttls_auto => true  }
 

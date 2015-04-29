@@ -1,12 +1,29 @@
-<h2>Forgot your password?</h2>
+<nav class="navbar navbar-default">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header page-scroll">
+    <%= image_tag("3-slim.png", :width => 150, class:"imager2") %>
+  </div>
+</nav>
+<div class="container">
+  <div class="col-md-8">
+    <h2>Forgot your password?</h2>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-  <%= devise_error_messages! %>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+      <%= devise_error_messages! %>
 
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email, autofocus: true %></div>
+      <div><%= f.label :email %><br />
+      <%= f.email_field :email, autofocus: true, class:"form-control" %></div>
 
-  <div><%= f.submit "Send me reset password instructions" %></div>
-<% end %>
-
-<%= render "users/shared/links" %>
+      <div class="row">
+        <div class="col-md-12">
+          <%= f.submit "Send me reset password instructions", class:"btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+    <div class="row">
+      <div class="col-md-12">
+        <%= render "users/shared/links" %>
+      </div>
+    </div>
+  </div>
+</div>

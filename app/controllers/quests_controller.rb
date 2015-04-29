@@ -4,6 +4,7 @@ class QuestsController < ApplicationController
       @quests = Quest.where("squire_id = ? AND is_assigned = ? AND is_completed = ?", current_user.id, false, false)
       @quests2 = Quest.where("squire_id = ? AND is_assigned = ? AND is_completed = ?", current_user.id, true, false)
     end
+    @message = Message.new
   end
 
   def show
@@ -11,6 +12,8 @@ class QuestsController < ApplicationController
     @quests = Quest.all
     @user = User.where(id: @quest.squire_id).first
     @duke = Duke.where(id: @quest.duke_id).first
+    @review = Review.new
+    @reviews = Review.where(squire_id: @user.id)
   end
 
   def new
@@ -222,8 +225,11 @@ class QuestsController < ApplicationController
   def submitproposal
     @quest = Quest.find(params[:id])
     @quest.is_proposalsent = true
+    @duke = Duke.where(activequest_id: @quest.id).first
     if @quest.save
       ProposalMailer.proposal_email(@quest).deliver_later
+      client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
+      client.messages.create from: Rails.application.secrets.twilio_phone_number, to: @duke.phonenumber, body:"You've received the following proposal http://www.joinsquire.com/quests/"+@quest.id.to_s
       redirect_to edit_quest_path(@quest), notice: "Proposal was sent"
     else
       redirect_to edit_quest_path(@quest), notice: "Something went wrong"
@@ -235,8 +241,11 @@ class QuestsController < ApplicationController
     @quest.is_revisedproposalsent = true
     @quest.is_revisionrequested = false
     @quest.is_revisiontransition = false
+    @duke = Duke.where(activequest_id: @quest.id).first
     if @quest.save
       ProposalMailer.revised_proposal_email(@quest).deliver_later
+      client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
+      client.messages.create from: Rails.application.secrets.twilio_phone_number, to: @duke.phonenumber, body:"You've received the following revised proposal http://www.joinsquire.com/quests/"+@quest.id.to_s
       redirect_to edit_quest_path(@quest), notice: "Revised Proposal was sent"
     else
       redirect_to edit_quest_path(@quest), notice: "Something went wrong"

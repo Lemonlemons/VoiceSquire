@@ -16,9 +16,9 @@ class ReviewsController < ApplicationController
     @review = Review.new(review_params)
 
     if @review.save
-      redirect_to quests_path, notice: "review was saved"
+      redirect_to show_quest_path(@review.quest_id), notice: "review was saved"
     else
-      render "new"
+      redirect_to quests_path, notice: "Something went wrong"
     end
   end
 
@@ -31,9 +31,9 @@ class ReviewsController < ApplicationController
     @review = Review.find(params[:id])
 
     if @review.update_attributes(review_params)
-      redirect_to edit_review_path(@review), notice: "Your review has been updated"
+      redirect_to show_quest_path(@review.quest_id), notice: "Your review has been updated"
     else
-      redirect_to edit_review_path(@review), notice: "Something went wrong"
+      redirect_to quests_path, notice: "Something went wrong"
     end
   end
 

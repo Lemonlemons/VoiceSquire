@@ -153,49 +153,105 @@
                   <a href="#page-top"></a>
               </li>
               <li class="page-scroll">
-                  <a href="#sec2">The Process</a>
+                  <a href="#sec2">Mailing List</a>
               </li>
               <li class="page-scroll">
-                  <a href="#sec3">Examples</a>
+                  <a href="#sec3">What is Squire?</a>
               </li>
               <li class="page-scroll">
-                  <a href="#sec4">About</a>
+                  <a href="#sec6">The Process</a>
               </li>
               <li class="page-scroll">
-                  <a href="#sec5">Become a Squire</a>
+                  <a href="#sec8">Become a Squire</a>
               </li>
               <li class="page-scroll">
-                  <a href="#sec7">Contact Us</a>
+                  <a href="#sec11">Contact Us</a>
               </li>
               <li class="page-scroll">
-                <%= button_to "Sign up", new_user_registration_path, class: 'btn btn-default btn-margin-left', id:"lemon", method:"get" %>
+                <%= button_to "Sign up", "#sec3", class: 'btn btn-default btn-margin-left', id:"lemon", method:"get" %>
               </li>
               <li class="page-scroll">
                 &nbsp;
               </li>
               <li class="page-scroll">
-                <%= button_to "Sign in", new_user_session_path, class: 'btn btn-primary btn-margin-left', method:"get" %>
+                <%= button_to "Sign in", "#sec3", class: 'btn btn-primary btn-margin-left', method:"get" %>
               </li>
           </ul>
       </div>
   </nav>
-  <div class="header alt vert">
+  <div id="sec1" class="header alt vert">
     <div class="container">
       <h1>Welcome to Squire</h1>
         <p class="lead">Whatever you want, Whenever you want</p>
         <div>&nbsp;</div>
-        <%= link_to "Get Started", new_duke_path, class:"btn btn-default btn-lg" %>
+        <%= button_to "Get Started", "#sec3", class:"btn btn-default btn-lg", method:"get" %>
+    </div>
+  </div>
+  <div id="sec2" class="callout">
+    <div class="vert">
+      <div class="col-md-12 text-center"><h1>Launching Summer 2015</h1></div>
+      <div class="col-md-12 text-center"><h2>We're hard at work building the best Squire we can; please keep an eye out for updates!</h2>
+        <br />
+        <br />
+        <br />
+      </div>
+      <div class="col-md-12 text-center"><h2>Enter your email below to keep up with Squire as it grows!</h2></div>
+      <div class="col-md-12 text-center">&nbsp;</div>
+      <div class="col-md-8 col-md-offset-2 text-center">
+        <div class="row">
+          <%= form_for @message do |form| %>
+            <%= form.text_field :body, autocomplete: "off", class:"form-control" %>
+            <%= form.hidden_field :squire_id, value: 1 %>
+            <%= form.hidden_field :duke_id, value: 1 %>
+            <%= form.hidden_field :quest_id, value: 1 %>
+            <%= form.submit "Submit", class:'btn btn-primary btn-lg' %>
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
 
-  <hr>
+  <div id="sec3" class="blurb">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7">
+          <h1>What is Squire?</h1>
+          <p class="lead">Simply, Squire is a service that can get you whatever you want as easily as pushing a button.</p>
+          <p class="lead">Squire works by connecting you to a hand-picked Squire instantly. This Squire will assist you in everything from buying groceries to making you a doctors appointment.</p>
+          <p class="lead">Give Squire a call or text and see what we can do!</p>
+        </div>
+        <div class="col-md-5">
+          <br />
+          <br />
+          <br />
+          <h1 class="pull-right"><i class="fa fa-users fa-3x"></i> <i class="fa fa-arrow-right fa-2x"></i> <i class="fa fa-thumbs-o-up fa-3x"></i></h1>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <div id="sec1" class="blurb">
+  <div id="sec4" class="featurette">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2">
+          <h1><i class="fa fa-microphone fa-3x"></i></h1>
+        </div>
+        <div class="col-md-2">
+          <h1><i class="fa fa-comments fa-3x"></i></h1>
+        </div>
+        <div class="col-md-8">
+          <h1 class="pull-left">Call or Text our Squires at: (Coming soon!)</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec5" class="blurb">
     <div class="container">
       <div class="row">
         <div class="col-md-7">
           <h1>Three ways to connect.</h1>
-          <p class="lead">You can call, text, or use our online form to submit your job to our finest Squires.</p>
+          <p class="lead">You can call, text, or use our app to contact our finest Squires.</p>
         </div>
         <div class="col-md-5">
           <h1 class="pull-right"><i class="fa fa-phone fa-2x"></i> <i class="fa fa-mobile fa-2x"></i> <i class="icon-laptop icon-3x"></i></h1>
@@ -204,7 +260,7 @@
     </div>
   </div>
 
-  <div class="featurette" id="sec2">
+  <div id="sec6" class="featurette">
     <div class="container">
       <div class="row">
         <div class="col-md-12 text-center">
@@ -215,15 +271,15 @@
         <div class="col-md-2 col-md-offset-1 text-center">
           <div class="featurette-item">
             <i class="fa fa-paper-plane"></i>
-            <h4>Submit your Requst</h4>
+            <h4>Connect to Squire</h4>
             <p>Whatever problem you have, or job you need done.</p>
           </div>
         </div>
         <div class="col-md-2 text-center">
           <div class="featurette-item">
             <i class="fa fa-refresh fa-spin"></i>
-            <h4>Receive Confirmation</h4>
-            <p>A Squire has accepted your job and is working tirelessly to complete it.</p>
+            <h4>Talk or text with a helpful Squire</h4>
+            <p>Your Squire will ask you everything they need to know to get your request done.</p>
           </div>
         </div>
         <div class="col-md-2 text-center">
@@ -237,21 +293,21 @@
           <div class="featurette-item">
             <i class="fa fa-diamond"></i>
             <h4>Receive Squire's Proposal</h4>
-            <p>The Squire will prepare documents and a description of exactly how they're going to complete your request, you can receive proposals over text, email, or phonecall</p>
+            <p>Your Squire will deliver a proposal, you can receive proposals over text, email, or phonecall</p>
           </div>
         </div>
         <div class="col-md-2 text-center">
           <div class="featurette-item">
             <i class="fa fa-thumbs-o-up"></i>
             <h4>Accept Proposal or Request a Revision</h4>
-            <p>Everything look good? Accept the proposal and pay yuor request. Don't worry, we'll hold the payment until the Squire has proven they've completed the request just as you want it.</p>
+            <p>Everything look good? Accept the proposal and pay for your request. Don't worry, we'll hold the payment until the Squire has proven they've completed the request just as you want it.</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="callout" id="sec3">
+  <div class="callout" id="sec7">
     <div class="vert">
       <div class="col-md-12 text-center"><h2>Just a sample of everything Squire can do for you.</h2></div>
       <div class="col-md-12 text-center">&nbsp;</div>
@@ -265,52 +321,65 @@
          <div class="col-sm-2"><%= image_tag("dogwalker.jpg", class:"img-circle grayscale") %><h4>Dog Walking</h4></div>
         </div>
       </div>
+      <div class="col-md-12 text-center">
+        <br />
+        <br />
+        <h2>Remember, our Squires use services such as Uber, Instacart, Taskrabbit, and local delivery services, if you live in an area without these services Squire may not be able to provide you with service.</h2>
+      </div>
     </div>
   </div>
 
-  <div class="blurb" id="sec4">
+  <div class="blurb" id="sec8">
     <div class="container">
       <div class="row">
         <div class="col-md-12 text-center">
           <h1>How to become a Squire</h1>
-          <ul>
-            <li>Complete an conprehensive application process</li>
-            <li>Have a one-on-one interview with a Squire employee</li>
-            <li>Complete training on several big e-commerce platforms that all squires should be able to use</li>
-            <li>Sign up for a Stripe account to receive payments</li>
-            <li>Be a humble, upstanding Squire and live up to the name!</li>
-          </ul>
+          <h3>Complete an conprehensive application process</h3>
+          <h3>Have a one-on-one interview with a Squire employee</h3>
+          <h3>Complete training on several big e-commerce platforms (Amazon, Ebay, Google Shops)</h3>
+          <h3>Sign up for a Stripe account to receive payments</h3>
+          <h3>Be a humble, upstanding Squire and live up to the name!</h3>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="featurette" id="sec5">
+  <div class="featurette" id="sec9">
     <div class="container">
       <div class="row">
-        <div class="col-md-5">
-          <h1><i class="icon-money icon-3x"></i></h1>
-        </div>
-        <div class="col-md-7">
+        <div class="col-md-12">
           <h1 class="pull-right">Being a Squire Pays</h1>
-          <p class="lead pull-right">The Squire makes 5% of every request completed.
-            If a squire can complete 10 requests per hour and each request has the
-            average completion vaue of 50$ (which is fairly conservative
-            considering the average cost of a trip to the grocery store can cost
-            around $100), then that squire will be making approxiamately $25 an hour.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <h3>The Squire makes 5% of each Quest they complete</h3>
+          <h1 class='bigger'>5%x</h1>
+        </div>
+        <div class="col-md-3">
+          <h3>If a Squire can complete 10 Quests per hour</h3>
+          <h1 class='bigger'>10x</h1>
+        </div>
+        <div class="col-md-3">
+          <h3>With an average Quest completion value of $50</h3>
+          <h1 class='bigger'>$50=</h1>
+        </div>
+        <div class="col-md-3">
+          <h3>Then a Squires will be making about $25 per hour</h3>
+          <h1 class='bigger'>$25p/h</h1>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="blurb bright" id="sec6">
+  <div class="blurb bright" id="sec10">
     <div class="container">
       <h1>Launching Summer 2015</h1>
       <p class="lead">Check back later for more updates!</p>
     </div>
   </div>
 
-  <div class="blurb" id="sec7">
+  <div class="blurb" id="sec11">
     <div class="container">
       <div class="row">
         <div class="col-md-6 col-md-offset-3 text-center">
@@ -335,7 +404,7 @@
             <li><i class="icon-pinterest icon-2x"></i></li>
           </ul>
           <hr>
-          <p>Squire LLC., 2015</p>
+          <p>Squire ,<a href="<%= new_user_registration_path %>">L</a><a href="<%= new_user_session_path %>">L</a><a href="<%= new_duke_path %>">C</a>., 2015</p>
         </div>
       </div>
     </div>

@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
   validates :birthday, :presence => {message:"is missing an input"}
   validates :phonenumber, :length => {maximum:12, minimum:10, message:"must be 10 digits"}
 
+  mount_uploader :profilepic, PictureUploader
+
   # Include default devise modules. Others available are:
   # :lockable, :timeoutable
   devise :database_authenticatable, :registerable,

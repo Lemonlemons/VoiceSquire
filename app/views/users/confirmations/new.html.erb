@@ -1,12 +1,26 @@
-<h2>Resend confirmation instructions</h2>
+<nav class="navbar navbar-default">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header page-scroll">
+    <%= image_tag("3-slim.png", :width => 150, class:"imager2") %>
+  </div>
+</nav>
+<div class="container">
+  <div class="col-md-6">
+    <h2>Resend confirmation instructions</h2>
 
-<%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
-  <%= devise_error_messages! %>
+    <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
+      <%= devise_error_messages! %>
 
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email, autofocus: true %></div>
+      <div><%= f.label :email, "Your Email:" %><br />
+      <%= f.email_field :email, autofocus: true, class:"form-control" %></div>
 
-  <div><%= f.submit "Resend confirmation instructions" %></div>
-<% end %>
+      <div class="row">
+        <div class="col-md-12">
+          <%= f.submit "Resend confirmation instructions", class:"btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
 
-<%= render "users/shared/links" %>
+    <%= render "users/shared/links" %>
+  </div>
+</div>

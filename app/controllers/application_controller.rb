@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
               :completedtaskrabbittraining, :instacarttraining, :description, :question1, :question2,
               :question3, :question4, :question5, :numberofquestsflagged, :numberofreviews,
               :reviewpercentage, :numberofnotes, :stripecomplete, :trainingcomplete, :interviewcomplete,
-              :registrationcomplete) }
+              :registrationcomplete, :profilepic) }
             devise_parameter_sanitizer.for(:account_update) { |u| u.permit(:email, :is_female, :birthday,
               :firstname, :lastname, :phonenumber, :address, :country, :zipcode, :city, :password,
               :state, :country, :provider, :uid, :access_code, :publishable_key, :activequests,
@@ -21,6 +21,6 @@ class ApplicationController < ActionController::Base
               :completedtaskrabbittraining, :instacarttraining, :description, :question1, :question2,
               :question3, :question4, :question5, :numberofquestsflagged, :numberofreviews,
               :reviewpercentage, :numberofnotes, :stripecomplete, :trainingcomplete, :interviewcomplete,
-              :registrationcomplete, :current_password) }
+              :registrationcomplete, :profilepic, :current_password) }
         end
 end

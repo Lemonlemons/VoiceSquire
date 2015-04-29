@@ -14,7 +14,7 @@ Rails.application.configure do
   :port                 => '587',
   :domain               => 'usesquire.com',
   :user_name            => 'info@usesquire.com',
-  :password             => 'Megamoe7!',
+  :password             => 'Squire2015!',
   :authentication       => :login,
   :enable_starttls_auto => true  }
 

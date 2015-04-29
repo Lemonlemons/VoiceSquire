@@ -5,22 +5,72 @@
   </div>
 </nav>
 <div class="container">
-  <% if @quest.is_completed == true %>
-    <h1>Thank You, this Quest is completed</h1>
-  <% elsif @quest.is_proofsubmitted == true %>
-    <h1>Thank You for submitting proof</h1>
-    <% if current_user != nil %>
-      <% if current_user.is_admin == true %>
+  <div class="row">
+    <div class="col-md-8">
+      <% if @quest.is_completed == true %>
+        <h1>Thank You, this Quest is completed</h1>
+      <% elsif @quest.is_proofsubmitted == true %>
+        <h1>Thank You for submitting proof</h1>
+        <% if current_user != nil %>
+          <% if current_user.is_admin == true %>
+            <h1><%= @quest.title %></h1>
+            <h2><%= @quest.description %></h2>
+            <h2>Price: <%= number_to_currency(@quest.totalprice) %></h2>
+            <h3>Uploaded Images:</h3>
+            <div class="row">
+              <div class="col-md-4">
+                <%= link_to image_tag(@quest.picture1), image_path(@quest.picture1) if @quest.picture1.present? %>
+              </div>
+              <div class="col-md-4">
+                <%= link_to image_tag(@quest.picture2), image_path(@quest.picture2) if @quest.picture2.present? %>
+              </div>
+              <div class="col-md-4">
+                <%= link_to image_tag(@quest.picture3), image_path(@quest.picture3) if @quest.picture3.present? %>
+              </div>
+            </div>
+            <h3>Uploaded Proof:</h3>
+            <div class="row">
+              <div class="col-md-4">
+                <%= link_to image_tag(@quest.proof1, :width => 500), image_path(@quest.proof1) if @quest.proof1.present? %>
+              </div>
+              <div class="col-md-4">
+                <%= link_to image_tag(@quest.proof2, :width => 500), image_path(@quest.proof2) if @quest.proof2.present? %>
+              </div>
+              <div class="col-md-4">
+                <%= link_to image_tag(@quest.proof3, :width => 500), image_path(@quest.proof3) if @quest.proof3.present? %>
+              </div>
+            </div>
+
+            <% if @quest.audiolink.nil? %>
+              <h2><%= @quest.textlink %></h2>
+            <% else %>
+              <audio controls>
+                <source src="<%= @quest.audiolink %>" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            <% end %>
+
+            <%= button_to "Release Payment", releasepayment_quest_path(@quest), :method => "get", class:"btn btn-primary"%>
+          <% end %>
+        <% end %>
+
+      <% elsif @quest.is_proposalaccepted == true %>
+        <h1>Congrats, the proposal was accepted please pay for and submit the proof</h1>
         <h1><%= @quest.title %></h1>
         <h2><%= @quest.description %></h2>
         <h2>Price: <%= number_to_currency(@quest.totalprice) %></h2>
         <h3>Uploaded Images:</h3>
-        <%= image_tag(@quest.picture1, :width => 200) if @quest.picture1.present? %>
-        <%= image_tag(@quest.picture2, :width => 200) if @quest.picture2.present? %>
-        <%= image_tag(@quest.picture3, :width => 200) if @quest.picture3.present? %>
-        <%= image_tag(@quest.proof1, :width => 500) if @quest.proof1.present? %>
-        <%= image_tag(@quest.proof2, :width => 500) if @quest.proof2.present? %>
-        <%= image_tag(@quest.proof3, :width => 500) if @quest.proof3.present? %>
+        <div class="row">
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture1), image_path(@quest.picture1) if @quest.picture1.present? %>
+          </div>
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture2), image_path(@quest.picture2) if @quest.picture2.present? %>
+          </div>
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture3), image_path(@quest.picture3) if @quest.picture3.present? %>
+          </div>
+        </div>
 
         <% if @quest.audiolink.nil? %>
           <h2><%= @quest.textlink %></h2>
@@ -31,164 +81,203 @@
           </audio>
         <% end %>
 
-        <%= button_to "Release Payment", releasepayment_quest_path(@quest), :method => "get"%>
+        <p><%= link_to "Back", edit_quest_path(@quest), class:"btn btn-default" %></p>
+
+      <% elsif @quest.is_revisionrequested == true %>
+        <h1><%= @quest.title %></h1>
+        <h2><%= @quest.description %></h2>
+        <h2>Price: <%= number_to_currency(@quest.totalprice) %></h2>
+        <h3>Uploaded Images:</h3>
+        <div class="row">
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture1), image_path(@quest.picture1) if @quest.picture1.present? %>
+          </div>
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture2), image_path(@quest.picture2) if @quest.picture2.present? %>
+          </div>
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture3), image_path(@quest.picture3) if @quest.picture3.present? %>
+          </div>
+        </div>
+
+        <% if @quest.audiolink.nil? %>
+          <h2><%= @quest.textlink %></h2>
+        <% else %>
+          <audio controls>
+            <source src="<%= @quest.audiolink %>" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        <% end %>
+
+        <p>Click the button below to accept the proposal and pay for your Quest.</p>
+        <%= image_tag("stripe-pay-button.png") %>
+        <p>(In the Duke's version this button will allow them to pay for the quest)</p>
+        <%= button_to "Resubmit Proposal", submitrevisedproposal_quest_path(@quest), :method => "get", class:"btn btn-primary" %>
+
+        <p><%= link_to "Back", edit_quest_path(@quest), class:"btn btn-default" %></p>
+
+      <% elsif @quest.is_revisedproposalsent == true %>
+        <h1><%= @quest.title %></h1>
+        <h2><%= @quest.description %></h2>
+        <h2>Price: <%= number_to_currency(@quest.totalprice) %></h2>
+        <h3>Uploaded Images:</h3>
+        <div class="row">
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture1), image_path(@quest.picture1) if @quest.picture1.present? %>
+          </div>
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture2), image_path(@quest.picture2) if @quest.picture2.present? %>
+          </div>
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture3), image_path(@quest.picture3) if @quest.picture3.present? %>
+          </div>
+        </div>
+
+        <% if @quest.audiolink.nil? %>
+          <h2><%= @quest.textlink %></h2>
+        <% else %>
+          <audio controls>
+            <source src="<%= @quest.audiolink %>" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        <% end %>
+
+        <p>Click the button below to accept the proposal and pay for your Quest.</p>
+        <% if @duke.customertoken == nil %>
+          <%= form_tag paybill_quest_path(@quest) do %>
+            <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                    data-key= "<%= Rails.application.secrets.stripe_publishable_key %>"
+                    data-description="A Completed Quest"
+                    data-amount="<%= @quest.totalprice * 100 %>">
+            </script>
+          <% end %>
+        <% else %>
+          <%= button_to "Submit Payment", paycharge_quest_path(@quest), :method => "get", class:"btn btn-primary" %>
+        <% end %>
+
+        <h4>Would you like the squire to make another revision to the proposal?</h4>
+        <%= form_for @quest do |form| %>
+          <p><%= form.label "Enter new revision below:" %></p>
+          <p><%= form.text_area :revision, autocomplete: "off" %></p>
+          <%= form.hidden_field :is_revisionrequested, value: true %>
+          <p><%= form.submit "Send", class:"btn btn-warning" %></p>
+        <% end %>
+
+      <% elsif @quest.is_proposalsent == true %>
+        <h1><%= @quest.title %></h1>
+        <h2><%= @quest.description %></h2>
+        <h2>Price: <%= number_to_currency(@quest.totalprice) %></h2>
+        <h3>Uploaded Images:</h3>
+        <div class="row">
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture1), image_path(@quest.picture1) if @quest.picture1.present? %>
+          </div>
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture2), image_path(@quest.picture2) if @quest.picture2.present? %>
+          </div>
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture3), image_path(@quest.picture3) if @quest.picture3.present? %>
+          </div>
+        </div>
+
+        <% if @quest.audiolink.nil? %>
+          <h2><%= @quest.textlink %></h2>
+        <% else %>
+          <audio controls>
+            <source src="<%= @quest.audiolink %>" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        <% end %>
+
+        <p>Click the button below to accept the proposal and pay for your Quest.</p>
+        <% if @duke.customertoken == nil %>
+          <%= form_tag paybill_quest_path(@quest) do %>
+            <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                    data-key= "<%= Rails.application.secrets.stripe_publishable_key %>"
+                    data-description="A Completed Quest"
+                    data-amount="<%= @quest.totalprice * 100 %>">
+            </script>
+          <% end %>
+        <% else %>
+          <%= button_to "Submit Payment", paycharge_quest_path(@quest), :method => "get", class:"btn btn-primary" %>
+        <% end %>
+
+        <h4>Would you like the squire to make a revision to the proposal?</h4>
+        <%= form_for @quest do |form| %>
+          <p><%= form.label "Enter revision below:" %></p>
+          <p><%= form.text_area :revision, autocomplete: "off" %></p>
+          <%= form.hidden_field :is_revisionrequested, value: true %>
+          <p><%= form.submit "Send", class:"btn btn-warning" %></p>
+        <% end %>
+
+      <% elsif @quest.is_assigned == true %>
+        <h1><%= @quest.title %></h1>
+        <h2><%= @quest.description %></h2>
+        <h2>Price: <%= number_to_currency(@quest.totalprice) %></h2>
+        <h3>Uploaded Images:</h3>
+        <div class="row">
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture1), image_path(@quest.picture1) if @quest.picture1.present? %>
+          </div>
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture2), image_path(@quest.picture2) if @quest.picture2.present? %>
+          </div>
+          <div class="col-md-4">
+            <%= link_to image_tag(@quest.picture3), image_path(@quest.picture3) if @quest.picture3.present? %>
+          </div>
+        </div>
+        <h3>The Quest:</h3>
+        <% if @quest.audiolink.nil? %>
+          <h4><%= @quest.textlink %></h4>
+        <% else %>
+          <audio controls>
+            <source src="<%= @quest.audiolink %>" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        <% end %>
+
+        <p>Click the button below to accept the proposal and pay for your Quest.</p>
+        <%= image_tag("stripe-pay-button.png") %>
+        <p>(In the Duke's version this button will allow them to pay for the quest)</p>
+        <%= button_to "Submit Proposal", submitproposal_quest_path(@quest), :method => "get", class:"btn btn-primary" %>
+        <br />
+        <p><%= link_to "Back", edit_quest_path(@quest), class:"btn btn-default" %></p>
+      <% else %>
+        <p>Nope</p>
       <% end %>
-    <% end %>
-
-  <% elsif @quest.is_proposalaccepted == true %>
-    <h1>Congrats, the proposal was accepted please pay for and submit the job</h1>
-    <h1><%= @quest.title %></h1>
-    <h2><%= @quest.description %></h2>
-    <h2>Price: <%= number_to_currency(@quest.totalprice) %></h2>
-    <h3>Uploaded Images:</h3>
-    <%= image_tag(@quest.picture1, :width => 200) if @quest.picture1.present? %>
-    <%= image_tag(@quest.picture2, :width => 200) if @quest.picture2.present? %>
-    <%= image_tag(@quest.picture3, :width => 200) if @quest.picture3.present? %>
-
-    <% if @quest.audiolink.nil? %>
-      <h2><%= @quest.textlink %></h2>
-    <% else %>
-      <audio controls>
-        <source src="<%= @quest.audiolink %>" type="audio/wav">
-        Your browser does not support the audio element.
-      </audio>
-    <% end %>
-
-    <p>Click the button below to accept the proposal and pay for your Quest.</p>
-    <%= image_tag("stripe-pay-button.png") %>
-    <p>(In the Duke's version this button will allow them to pay for the quest)</p>
-    <%= button_to "Submit Proposal", submitproposal_quest_path(@quest), :method => "get" %>
-
-    <p><%= link_to "Back", edit_quest_path(@quest) %></p>
-
-  <% elsif @quest.is_revisionrequested == true %>
-    <h1><%= @quest.title %></h1>
-    <h2><%= @quest.description %></h2>
-    <h2>Price: <%= number_to_currency(@quest.totalprice) %></h2>
-    <h3>Uploaded Images:</h3>
-    <%= image_tag(@quest.picture1, :width => 200) if @quest.picture1.present? %>
-    <%= image_tag(@quest.picture2, :width => 200) if @quest.picture2.present? %>
-    <%= image_tag(@quest.picture3, :width => 200) if @quest.picture3.present? %>
-
-    <% if @quest.audiolink.nil? %>
-      <h2><%= @quest.textlink %></h2>
-    <% else %>
-      <audio controls>
-        <source src="<%= @quest.audiolink %>" type="audio/wav">
-        Your browser does not support the audio element.
-      </audio>
-    <% end %>
-
-    <p>Click the button below to accept the proposal and pay for your Quest.</p>
-    <%= image_tag("stripe-pay-button.png") %>
-    <p>(In the Duke's version this button will allow them to pay for the quest)</p>
-    <%= button_to "Submit Proposal", submitproposal_quest_path(@quest), :method => "get" %>
-
-    <p><%= link_to "Back", edit_quest_path(@quest) %></p>
-
-  <% elsif @quest.is_revisedproposalsent == true %>
-    <h1><%= @quest.title %></h1>
-    <h2><%= @quest.description %></h2>
-    <h2>Price: <%= number_to_currency(@quest.totalprice) %></h2>
-    <h3>Uploaded Images:</h3>
-    <%= image_tag(@quest.picture1, :width => 200) if @quest.picture1.present? %>
-    <%= image_tag(@quest.picture2, :width => 200) if @quest.picture2.present? %>
-    <%= image_tag(@quest.picture3, :width => 200) if @quest.picture3.present? %>
-
-    <% if @quest.audiolink.nil? %>
-      <h2><%= @quest.textlink %></h2>
-    <% else %>
-      <audio controls>
-        <source src="<%= @quest.audiolink %>" type="audio/wav">
-        Your browser does not support the audio element.
-      </audio>
-    <% end %>
-
-    <p>Click the button below to accept the proposal and pay for your Quest.</p>
-    <% if @duke.customertoken == nil %>
-      <%= form_tag paybill_quest_path(@quest) do %>
-        <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                data-key= "<%= Rails.application.secrets.stripe_publishable_key %>"
-                data-description="A Completed Quest"
-                data-amount="<%= @quest.totalprice * 100 %>">
-        </script>
+    </div>
+    <div class="col-md-4">
+      <h2>About your Squire</h2>
+      <%= link_to image_tag(@user.profilepic, width:200), image_path(@user.profilepic) if @user.profilepic.present? %>
+      <h4>Name: <%= @user.firstname %> <%= @user.lastname %></h4>
+      <h4>Description: <%= @user.description %></h4>
+      <p>Question 1: Why did you sign up for Squire?</p>
+      <strong><%= @user.question1 %></strong>
+      <br />
+      <p>Question 2: How do you participate in your community?</p>
+      <strong><%= @user.question2 %></strong>
+      <br />
+      <p>Question 3: What's something interesting about you?</p>
+      <strong><%= @user.question3 %></strong>
+      <br />
+      <h3>Reviews of this Squire</h3>
+      <% @reviews.each do |review| %>
+        <p>Rating: <%= review.rating %></p>
+        <p><%= review.explanation %></p>
       <% end %>
-    <% else %>
-      <%= button_to "Submit Payment", paycharge_quest_path(@quest), :method => "get" %>
-    <% end %>
-
-    <h4>Would you like the squire to make another revision to the proposal?</h4>
-    <%= form_for @quest do |form| %>
-      <p><%= form.label "Enter new revision below:" %></p>
-      <p><%= form.text_area :revision, autocomplete: "off" %></p>
-      <%= form.hidden_field :is_revisionrequested, value: true %>
-      <p><%= form.submit "Send" %></p>
-    <% end %>
-
-  <% elsif @quest.is_proposalsent == true %>
-    <h1><%= @quest.title %></h1>
-    <h2><%= @quest.description %></h2>
-    <h2>Price: <%= number_to_currency(@quest.totalprice) %></h2>
-    <h3>Uploaded Images:</h3>
-    <%= image_tag(@quest.picture1, :width => 200) if @quest.picture1.present? %>
-    <%= image_tag(@quest.picture2, :width => 200) if @quest.picture2.present? %>
-    <%= image_tag(@quest.picture3, :width => 200) if @quest.picture3.present? %>
-
-    <% if @quest.audiolink.nil? %>
-      <h2><%= @quest.textlink %></h2>
-    <% else %>
-      <audio controls>
-        <source src="<%= @quest.audiolink %>" type="audio/wav">
-        Your browser does not support the audio element.
-      </audio>
-    <% end %>
-
-    <p>Click the button below to accept the proposal and pay for your Quest.</p>
-    <% if @duke.customertoken == nil %>
-      <%= form_tag paybill_quest_path(@quest) do %>
-        <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                data-key= "<%= Rails.application.secrets.stripe_publishable_key %>"
-                data-description="A Completed Quest"
-                data-amount="<%= @quest.totalprice * 100 %>">
-        </script>
+      <% if ((@quest.is_proposalsent == true) or (@quest.is_revisedproposalsent == true)) %>
+        <h4>Create a review</h4>
+        <%= form_for @review do |form| %>
+          <%= form.label "Please rate this squire out of 5" %>
+          <%= form.text_field :rating, autocomplete: "off", class:"form-control" %>
+          <%= form.label "Enter review below:" %>
+          <%= form.text_area :explanation, autocomplete: "off", class:"form-control", rows:"5", id:"comment" %>
+          <%= form.hidden_field :squire_id, value: @quest.squire_id %>
+          <%= form.hidden_field :duke_id, value: @quest.duke_id %>
+          <%= form.hidden_field :quest_id, value: @quest.id %>
+          <%= form.submit "Save", class:'btn btn-primary' %>
+        <% end %>
       <% end %>
-    <% else %>
-      <%= button_to "Submit Payment", paycharge_quest_path(@quest), :method => "get" %>
-    <% end %>
-
-    <h4>Would you like the squire to make a revision to the proposal?</h4>
-    <%= form_for @quest do |form| %>
-      <p><%= form.label "Enter revision below:" %></p>
-      <p><%= form.text_area :revision, autocomplete: "off" %></p>
-      <%= form.hidden_field :is_revisionrequested, value: true %>
-      <p><%= form.submit "Send" %></p>
-    <% end %>
-
-  <% elsif @quest.is_assigned == true %>
-    <h1><%= @quest.title %></h1>
-    <h2><%= @quest.description %></h2>
-    <h2>Price: <%= number_to_currency(@quest.totalprice) %></h2>
-    <h3>Uploaded Images:</h3>
-    <%= link_to image_tag(@quest.picture1, :width => 200), image_path(@quest.picture1) if @quest.picture1.present? %>
-    <%= link_to image_tag(@quest.picture2, :width => 200), image_path(@quest.picture2) if @quest.picture2.present? %>
-    <%= link_to image_tag(@quest.picture3, :width => 200), image_path(@quest.picture3) if @quest.picture3.present? %>
-
-    <% if @quest.audiolink.nil? %>
-      <h2><%= @quest.textlink %></h2>
-    <% else %>
-      <audio controls>
-        <source src="<%= @quest.audiolink %>" type="audio/wav">
-        Your browser does not support the audio element.
-      </audio>
-    <% end %>
-
-    <p>Click the button below to accept the proposal and pay for your Quest.</p>
-    <%= image_tag("stripe-pay-button.png") %>
-    <p>(In the Duke's version this button will allow them to pay for the quest)</p>
-    <%= button_to "Submit Proposal", submitproposal_quest_path(@quest), :method => "get" %>
-
-    <p><%= link_to "Back", edit_quest_path(@quest) %></p>
-  <% else %>
-    <p>Nope</p>
-  <% end %>
+    </div>
+  </div>
 </div>

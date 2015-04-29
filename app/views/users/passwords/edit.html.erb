@@ -1,16 +1,26 @@
-<h2>Change your password</h2>
+<nav class="navbar navbar-default">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header page-scroll">
+    <%= image_tag("3-slim.png", :width => 150, class:"imager2") %>
+  </div>
+</nav>
+<div class="container">
+  <div class="col-md-8">
+    <h2>Change your password</h2>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= devise_error_messages! %>
-  <%= f.hidden_field :reset_password_token %>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+      <%= devise_error_messages! %>
+      <%= f.hidden_field :reset_password_token %>
 
-  <div><%= f.label :password, "New password" %><br />
-    <%= f.password_field :password, autofocus: true, autocomplete: "off" %></div>
+      <div><%= f.label :password, "New password" %><br />
+        <%= f.password_field :password, autofocus: true, autocomplete: "off", class:"form-control" %></div>
 
-  <div><%= f.label :password_confirmation, "Confirm new password" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "off" %></div>
+      <div><%= f.label :password_confirmation, "Confirm new password" %><br />
+        <%= f.password_field :password_confirmation, autocomplete: "off", class:"form-control" %></div>
 
-  <div><%= f.submit "Change my password" %></div>
-<% end %>
+      <div><%= f.submit "Change my password", class:"btn btn-primary" %></div>
+    <% end %>
 
-<%= render "users/shared/links" %>
+    <%= render "users/shared/links" %>
+  </div>
+</div>
