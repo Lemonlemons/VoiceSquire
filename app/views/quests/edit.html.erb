@@ -372,7 +372,6 @@
             <% if quest.audiolink.nil? %>
               <% if quest.title == nil %>
                 <h3><%= link_to "Text Quest "+quest.id.to_s, edit_quest_path(quest) %></h3>
-                <h3><%= link_to quest.textlink, edit_quest_path(quest) %></h3>
               <% else %>
                 <h3><%= link_to quest.title, edit_quest_path(quest) %></h3>
               <% end %>

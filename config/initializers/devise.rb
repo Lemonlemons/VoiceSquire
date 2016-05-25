@@ -22,8 +22,8 @@ Devise.setup do |config|
   require 'devise/orm/active_record'
 
   config.omniauth :stripe_connect,
-    Rails.application.secrets.stripe_connect_client_id,
-    Rails.application.secrets.stripe_secret_key,
+    ENV["stripe_connect_client_id"],
+    ENV["stripe_secret_key"],
     :scope => 'read_write',
     :stripe_landing => 'register'
 

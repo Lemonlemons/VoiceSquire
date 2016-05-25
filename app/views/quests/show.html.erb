@@ -146,7 +146,7 @@
         <% if @duke.customertoken == nil %>
           <%= form_tag paybill_quest_path(@quest) do %>
             <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                    data-key= "<%= Rails.application.secrets.stripe_publishable_key %>"
+                    data-key= "<%= ENV['stripe_publishable_key'] %>"
                     data-description="A Completed Quest"
                     data-amount="<%= @quest.totalprice * 100 %>">
             </script>
@@ -193,7 +193,7 @@
         <% if @duke.customertoken == nil %>
           <%= form_tag paybill_quest_path(@quest) do %>
             <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                    data-key= "<%= Rails.application.secrets.stripe_publishable_key %>"
+                    data-key= "<%= ENV['stripe_publishable_key'] %>"
                     data-description="A Completed Quest"
                     data-amount="<%= @quest.totalprice * 100 %>">
             </script>

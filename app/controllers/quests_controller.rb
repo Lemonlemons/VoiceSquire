@@ -35,8 +35,8 @@ class QuestsController < ApplicationController
       @quest = Quest.find(params[:id])
       @quests = Quest.where("squire_id = ? AND is_assigned = ? AND is_completed = ?", current_user.id, false, false)
       @quests2 = Quest.where("squire_id = ? AND is_assigned = ? AND is_completed = ?", current_user.id, true, false)
-      capability = Twilio::Util::Capability.new Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token
-      capability.allow_client_outgoing Rails.application.secrets.twilio_twiml_app_sid_basic_calling
+      capability = Twilio::Util::Capability.new ENV["twilio_account_sid"], ENV["twilio_auth_token"]
+      capability.allow_client_outgoing ENV["twilio_twiml_app_sid_basic_calling"]
       @token = capability.generate
       @notes = Note.where(duke_id: @quest.duke_id)
       @note = Note.new
@@ -293,8 +293,8 @@ class QuestsController < ApplicationController
       if @duke = Duke.where(squire_id: nil).first
         @duke.squire_id = @user.id
         @user.activequests = @user.activequests + 1
-        capability = Twilio::Util::Capability.new Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token
-        capability.allow_client_outgoing Rails.application.secrets.twilio_twiml_app_sid
+        capability = Twilio::Util::Capability.new ENV["twilio_account_sid"], ENV["twilio_auth_token"]
+        capability.allow_client_outgoing ENV["twilio_twiml_app_sid"]
         @token = capability.generate()
         if (@duke.save && @user.save)
           redirect_to edit_duke_path(@duke), notice: "Help this Duke fill out their registration"

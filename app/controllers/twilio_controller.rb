@@ -18,7 +18,7 @@ class TwilioController < ApplicationController
           response = Twilio::TwiML::Response.new do |r|
             # Should be your Twilio Number or a verified Caller ID
             r.Say "Connecting you to a Squire now."
-            r.Dial :callerId => Rails.application.secrets.twilio_phone_number, :record => "true", :action => "/twilio/squire_record" do |d|
+            r.Dial :callerId => ENV["twilio_phone_number"], :record => "true", :action => "/twilio/squire_record" do |d|
               # d.Client @user.id.to_s
               d.Queue "Squire Queue", url:"/twilio/duke_connect"
             end
@@ -40,6 +40,7 @@ class TwilioController < ApplicationController
       end
     else
       response = Twilio::TwiML::Response.new do |r|
+        r.Say fromnumber
         r.Say 'Hello and Welcome to Squire, to sign up to use Squire plese go to use Squire.com', :voice => 'alice'
         # r.Record action:"/twilio/record", method:"post"
       end
@@ -59,7 +60,7 @@ class TwilioController < ApplicationController
           response = Twilio::TwiML::Response.new do |r|
             # Should be your Twilio Number or a verified Caller ID
             r.Say "Connecting you to the Duke in waiting"
-            r.Dial :callerId => Rails.application.secrets.twilio_phone_number, :record => "true", :action => "/twilio/duke_record" do |d|
+            r.Dial :callerId => ENV["twilio_phone_number"], :record => "true", :action => "/twilio/duke_record" do |d|
               # d.Client @user.id.to_s
               d.Queue "Duke Queue", url:"/twilio/squire_connect"
             end
@@ -215,7 +216,7 @@ class TwilioController < ApplicationController
   def message
     messageBody = params['Body']
     messageFrom = params['From']
-    client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
+    client = Twilio::REST::Client.new(ENV["twilio_account_sid"], ENV["twilio_auth_token"])
     if @duke = Duke.where(phonenumber: messageFrom).first
       if @duke.activequest_id != nil
         @quest = Quest.where(id: @duke.activequest_id).first
@@ -233,18 +234,18 @@ class TwilioController < ApplicationController
           @duke.save
           textmessage = Message.new(duke_id: @duke.id, quest_id: @duke.activequest_id, is_text: true, sentby_duke: true, body: messageBody)
           textmessage.save
-          client.messages.create from: Rails.application.secrets.twilio_phone_number, to: @user.phonenumber, body:"You've received the following text quest: "+messageBody
+          client.messages.create from: ENV["twilio_phone_number"], to: @user.phonenumber, body:"You've received the following text quest: "+messageBody
         else
           quest = Quest.new(duke_id:@duke.id, textlink:messageBody, typeofquest:2)
           quest.save
-          client.messages.create from: Rails.application.secrets.twilio_phone_number, to: messageFrom, body:'A Squire will text you soon to confirm your Quest.'
+          client.messages.create from: ENV["twilio_phone_number"], to: messageFrom, body:'A Squire will text you soon to confirm your Quest.'
           # @duke.activequest_id = quest.id
           @duke.numberofquests = @duke.numberofquests + 1
           @duke.save
         end
       end
     else
-        client.messages.create from: Rails.application.secrets.twilio_phone_number, to: messageFrom, body:'Please go to www.joinSquire.com to sign up to use Squire.'
+        client.messages.create from: ENV["twilio_phone_number"], to: messageFrom, body:'Please go to www.useSquire.com to sign up to use Squire.'
     end
 
     render_twiml Twilio::TwiML::Response.new
@@ -260,7 +261,7 @@ class TwilioController < ApplicationController
   end
 
   def notify
-    client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
+    client = Twilio::REST::Client.new(ENV["twilio_account_sid"], ENV["twilio_auth_token"])
     message = client.messages.create from:'+12183166108', to:'+12183162469', body:'Learning to send SMS you are.'
   end
 
@@ -269,7 +270,7 @@ class TwilioController < ApplicationController
    customer = params[:id]
    response = Twilio::TwiML::Response.new do |r|
      r.Say 'Hello. Connecting you to the customer now.', :voice => 'alice'
-     r.Dial :callerId => Rails.application.secrets.twilio_phone_number do |d|
+     r.Dial :callerId => ENV["twilio_phone_number"] do |d|
        d.Number customer
      end
    end
