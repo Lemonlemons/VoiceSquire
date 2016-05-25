@@ -199,7 +199,7 @@ class TwilioController < ApplicationController
     duke = Duke.where(phonenumber:dukenumber).first
     quest = Quest.new(duke_id: duke.id, audiolink: recordingUrl, typeofquest:1)
     if quest.save
-      duke.activequest_id = quest.id
+      # duke.activequest_id = quest.id
       duke.save
       response = Twilio::TwiML::Response.new do |r|
         r.Say "It will be done."
@@ -213,8 +213,8 @@ class TwilioController < ApplicationController
   end
 
   def message
-    messageBody = params[:Body]
-    messageFrom = params[:From]
+    messageBody = params['Body']
+    messageFrom = params['From']
     client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
     if @duke = Duke.where(phonenumber: messageFrom).first
       if @duke.activequest_id != nil
@@ -228,7 +228,7 @@ class TwilioController < ApplicationController
           @user.activequests = @user.activequests + 1
           @user.is_text_active = false
           @user.save
-          @duke.activequest_id = quest.id
+          # @duke.activequest_id = @quest.id
           @duke.numberofquests = @duke.numberofquests + 1
           @duke.save
           textmessage = Message.new(duke_id: @duke.id, quest_id: @duke.activequest_id, is_text: true, sentby_duke: true, body: messageBody)
@@ -237,8 +237,8 @@ class TwilioController < ApplicationController
         else
           quest = Quest.new(duke_id:@duke.id, textlink:messageBody, typeofquest:2)
           quest.save
-          client.messages.create from: Rails.application.secrets.twilio_phone_number, to: messageFrom, body:'A Squire will text you soon to confirm your request.'
-          @duke.activequest_id = quest.id
+          client.messages.create from: Rails.application.secrets.twilio_phone_number, to: messageFrom, body:'A Squire will text you soon to confirm your Quest.'
+          # @duke.activequest_id = quest.id
           @duke.numberofquests = @duke.numberofquests + 1
           @duke.save
         end

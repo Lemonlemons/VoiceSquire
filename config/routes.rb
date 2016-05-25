@@ -19,10 +19,13 @@ Rails.application.routes.draw do
       get 'getmyquest'
       get 'moretexts'
       get 'gettextquest'
+      get 'moreinfo'
     end
   end
 
   resources :dukes
+  post 'dukes/sign_up_check' => 'dukes#sign_up_check'
+
   resources :messages
   resources :reviews
   resources :notes
@@ -43,6 +46,7 @@ Rails.application.routes.draw do
   post 'twilio/squiremessage' => 'twilio#squiremessage'
 
   root 'quests#index'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

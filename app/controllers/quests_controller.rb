@@ -37,7 +37,6 @@ class QuestsController < ApplicationController
       @quests2 = Quest.where("squire_id = ? AND is_assigned = ? AND is_completed = ?", current_user.id, true, false)
       capability = Twilio::Util::Capability.new Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token
       capability.allow_client_outgoing Rails.application.secrets.twilio_twiml_app_sid_basic_calling
-      capability.allow_client_incoming current_user.id.to_s
       @token = capability.generate
       @notes = Note.where(duke_id: @quest.duke_id)
       @note = Note.new
@@ -83,6 +82,11 @@ class QuestsController < ApplicationController
     redirect_to quests_path, notice:"Your quest has been deleted"
   end
 
+  def moreinfo
+    @quest = Quest.find(params[:id])
+    render json: @quest
+  end
+
   def moretexts
     @quests = Quest.where("squire_id IS ? AND typeofquest = ?", nil, 2)
   end
@@ -116,6 +120,7 @@ class QuestsController < ApplicationController
     @quest.save
     @user.activequests = @user.activequests + 1
     @user.save
+    redirect_to quests_path, notice:"You got it!"
   end
 
   def paybill
@@ -214,8 +219,9 @@ class QuestsController < ApplicationController
     @duke.activequest_id = nil
     if @quest.save && @user.save && @duke.save
       ProposalMailer.proof_email(@quest).deliver_later
-      client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
-      client.messages.create from: Rails.application.secrets.twilio_phone_number, to:@duke.phonenumber, body:"we've completed the job, come again!"
+      # duke should receive notification from app that the the quest is done and they can create a new one.
+      # client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
+      # client.messages.create from: Rails.application.secrets.twilio_phone_number, to:@duke.phonenumber, body:"we've completed the job, come again!"
       redirect_to edit_quest_path(@quest), notice: "Proof was sent"
     else
       redirect_to edit_quest_path(@quest), notice: "Something went wrong"
@@ -227,9 +233,13 @@ class QuestsController < ApplicationController
     @quest.is_proposalsent = true
     @duke = Duke.where(activequest_id: @quest.id).first
     if @quest.save
-      ProposalMailer.proposal_email(@quest).deliver_later
-      client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
-      client.messages.create from: Rails.application.secrets.twilio_phone_number, to: @duke.phonenumber, body:"You've received the following proposal http://www.joinsquire.com/quests/"+@quest.id.to_s
+      if @quest.received_from == 1
+        ProposalMailer.proposal_email(@quest).deliver_later
+      elsif @quest.received_from == 2
+        # the duke should receive a notification from the app that a proposal is ready
+      end
+      # client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
+      # client.messages.create from: Rails.application.secrets.twilio_phone_number, to: @duke.phonenumber, body:"You've received the following proposal http://www.joinsquire.com/quests/"+@quest.id.to_s
       redirect_to edit_quest_path(@quest), notice: "Proposal was sent"
     else
       redirect_to edit_quest_path(@quest), notice: "Something went wrong"
@@ -243,9 +253,13 @@ class QuestsController < ApplicationController
     @quest.is_revisiontransition = false
     @duke = Duke.where(activequest_id: @quest.id).first
     if @quest.save
-      ProposalMailer.revised_proposal_email(@quest).deliver_later
-      client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
-      client.messages.create from: Rails.application.secrets.twilio_phone_number, to: @duke.phonenumber, body:"You've received the following revised proposal http://www.joinsquire.com/quests/"+@quest.id.to_s
+      if @quest.received_from == 1
+        ProposalMailer.revised_proposal_email(@quest).deliver_later
+      elsif @quest.received_from == 2
+        # the duke should receive a notification from the app that a proposal is ready
+      end
+      # client = Twilio::REST::Client.new(Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token)
+      # client.messages.create from: Rails.application.secrets.twilio_phone_number, to: @duke.phonenumber, body:"You've received the following revised proposal http://www.joinsquire.com/quests/"+@quest.id.to_s
       redirect_to edit_quest_path(@quest), notice: "Revised Proposal was sent"
     else
       redirect_to edit_quest_path(@quest), notice: "Something went wrong"

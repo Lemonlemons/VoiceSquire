@@ -48,6 +48,21 @@ class DukesController < ApplicationController
     redirect_to quests_path, notice:"Your duke has been deleted"
   end
 
+  def sign_up_check
+    @number = params['Phone']
+    @message = params['Pass']
+    if @duke = Duke.where("phonenumber = ? AND password = ?", "+1"+@number, @message).first
+      if @duke.activequest_id == nil
+        render json: "d"+@duke.id.to_s
+      else
+        render json: "q"+@duke.id.to_s
+      end
+    else
+      render json: "No"
+    end
+
+  end
+
   def duke_params
     params.require(:duke).permit(:phonenumber, :firstname, :lastname, :email, :physicaladdress,
     :physicalcity, :physicalstate, :physicalcountry, :physicalzipcode, :preferredproposalmethod, :birthday, :is_landline,
