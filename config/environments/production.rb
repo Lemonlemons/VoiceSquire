@@ -1,7 +1,7 @@
 Rails.application.configure do
   config.middleware.use Rack::TwilioWebhookAuthentication, ENV["twilio_auth_token"], '/voice'
   # Settings specified here will take precedence over those in config/application.rb.
-  config.action_mailer.default_url_options = { :host => "www.usesquire.com" }
+  config.action_mailer.default_url_options = { :host => "http://pure-brook-44481.herokuapp.com" }
   # Code is not reloaded between requests.
   config.cache_classes = true
 
